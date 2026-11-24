@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0F6E56">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plan de estudio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: "Mi plan" on top (elegidos, tildes, links propios), semana, then one catalog section per area with pros y contras. */
+:root{
+  --bg:#F6F5F1; --card:#FFFFFF; --ink:#1B2A2F; --mute:#5E6B70; --line:#DAD8D0;
+  --log:#6A4BA8; --voc:#B8641A; --ing:#1F5FA8; --dat:#2F7D5B;
+  --logbg:#EDE8F6; --vocbg:#F8ECDD; --ingbg:#E6EEF8; --datbg:#E3F1EA;
+  --pro:#2F7D5B; --con:#A8402F;
+  --display:'Bricolage Grotesque',Georgia,serif; --body:'Source Sans 3',system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14191B; --card:#1D2427; --ink:#E9EEEF; --mute:#9AA7AB; --line:#323B3F;
+  --log:#B9A2EC; --voc:#E8A260; --ing:#7DB1EC; --dat:#6CC59A;
+  --logbg:#251F33; --vocbg:#2D2216; --ingbg:#1A2733; --datbg:#17291F; --pro:#6CC59A; --con:#EE9A8A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14191B; --card:#1D2427; --ink:#E9EEEF; --mute:#9AA7AB; --line:#323B3F;
+  --log:#B9A2EC; --voc:#E8A260; --ing:#7DB1EC; --dat:#6CC59A;
+  --logbg:#251F33; --vocbg:#2D2216; --ingbg:#1A2733; --datbg:#17291F; --pro:#6CC59A; --con:#EE9A8A; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--body)}
+main{max-width:1100px;margin:0 auto;padding:28px 16px 72px;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:34px} h2{font-size:26px} h3{font-size:18px}
+p{margin:0}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--ing);outline-offset:2px}
+.lead{color:var(--mute);max-width:64ch;margin-top:8px}
+section{display:flex;flex-direction:column;gap:16px}
+.small{font-size:15px;color:var(--mute)}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.nav a{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:5px 14px;font-size:15px;text-decoration:none}
+/* plan */
+.plan{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--dat);transition:width .25s}
+.pgroup{display:flex;flex-direction:column;gap:6px}
+.pgroup h3{font-size:15px;color:var(--mute);font-family:var(--body);font-weight:600}
+.prow{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.prow input[type=checkbox]{margin-top:5px;width:18px;height:18px;flex:none}
+.prow .tx{flex:1;min-width:0;overflow-wrap:anywhere}
+.prow.done .ti{color:var(--mute);text-decoration:line-through}
+.prow .ex{font-size:14px;color:var(--mute)}
+.linkbtn{background:none;border:0;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;text-decoration:underline;padding:2px 4px}
+.empty{color:var(--mute);font-size:15px}
+.addform{display:grid;grid-template-columns:150px 1fr 1fr auto;gap:8px;align-items:start}
+@media (max-width:760px){.addform{grid-template-columns:1fr}}
+.addform input,.addform select{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.btn{font:inherit;font-size:15px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer}
+.err{color:var(--con);font-size:14px;min-height:18px}
+.status{font-size:13px;color:var(--mute)}
+/* week */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:780px;font-size:15px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-weight:600;color:var(--mute);font-size:13px;background:var(--bg)}
+td:first-child{font-weight:600;white-space:nowrap}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:13px;font-weight:500;margin:2px 4px 2px 0}
+.t-l{background:var(--logbg);color:var(--log)} .t-v{background:var(--vocbg);color:var(--voc)}
+.t-i{background:var(--ingbg);color:var(--ing)} .t-d{background:var(--datbg);color:var(--dat)}
+.t-n{background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+/* catalog */
+.filters{position:sticky;top:0;z-index:2;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.fg{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.fg span{font-size:14px;color:var(--mute)}
+.chip{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:3px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-top-width:4px;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card[hidden]{display:none}
+.card.in{outline:2px solid var(--ink)}
+.card h3{font-size:17px}
+.by{font-size:14px;color:var(--mute)}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:1px 7px;color:var(--mute)}
+.meta span.top{background:var(--dat);border-color:var(--dat);color:var(--bg)}
+.pc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:15px}
+.pc li{padding-left:18px;position:relative}
+.pc li::before{position:absolute;left:0;font-weight:700}
+.pc.p li::before{content:"+";color:var(--pro)}
+.pc.c li::before{content:"\2212";color:var(--con)}
+.links{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:14px}
+.note{font-size:13px;color:var(--mute);font-style:italic}
+.card .btn{margin-top:auto;align-self:flex-start;background:transparent;color:var(--ink)}
+.card.in .btn{background:var(--ink);color:var(--bg)}
+.count{font-size:14px;color:var(--mute);font-weight:400;font-family:var(--body)}
+.foot{font-size:14px;color:var(--mute);border-top:1px solid var(--line);padding-top:16px}
+.foot ul{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:2px}
+</style>
+</head>
+<body>
+<p style="margin:0;padding:10px 16px;font:14px system-ui"><a href="index.html">← Mi rutina</a></p>
+<main>
+
+<header>
+  <h1>Plan de estudio</h1>
+  <p class="lead">Acá están todas las opciones que encontré, con pros y contras. Sumá las que quieras a tu plan, tildalas cuando las completes y agregá tus propios links. Por defecto ves solo las gratis y las mejores van primero; sacá el filtro «Solo gratis» para ver todo.</p>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#miplan">Mi plan</a><a href="#semana">La semana</a><a href="#s-log">Logística</a><a href="#s-voc">Hablar mejor</a><a href="#s-ing">Inglés</a><a href="#s-dat">Datos</a>
+  </nav>
+</header>
+
+<section id="miplan">
+  <h2>Mi plan</h2>
+  <div class="plan">
+    <div>
+      <p id="prog" class="small">Todavía no elegiste nada.</p>
+      <div class="bar"><i id="barfill"></i></div>
+    </div>
+    <div id="planlist"></div>
+    <form class="addform" id="addform" novalidate>
+      <select id="addcat" aria-label="Área"><option value="log">Logística</option><option value="voc">Hablar mejor</option><option value="ing">Inglés</option><option value="dat">Datos</option></select>
+      <input id="addtitle" type="text" placeholder="Qué querés estudiar" aria-label="Título">
+      <input id="addurl" type="text" placeholder="Link (https://…), opcional" aria-label="Link">
+      <button class="btn" type="submit">Agregar</button>
+    </form>
+    <p class="err" id="adderr" role="alert"></p>
+    <p class="status" id="status"></p>
+  </div>
+</section>
+
+<section id="semana">
+  <h2>La semana</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>Mañana</th><th>13:00</th><th>Tarde</th><th>Noche</th></tr></thead>
+    <tbody>
+      <tr><td>Lunes</td><td><span class="tag t-n">Jardín + gym</span></td><td><span class="tag t-l">Logística 15'</span></td><td><span class="tag t-i">Inglés 30'</span></td><td><span class="tag t-d">Datos 1 h</span></td></tr>
+      <tr><td>Martes</td><td><span class="tag t-n">Jardín + gym</span></td><td><span class="tag t-l">Logística 15'</span></td><td><span class="tag t-i">Inglés 30'</span></td><td><span class="tag t-d">Datos 1 h</span></td></tr>
+      <tr><td>Miércoles</td><td><span class="tag t-l">Viaje: lectura de logística 30'</span></td><td><span class="tag t-n">Libre</span></td><td><span class="tag t-v">Viaje de vuelta: vocabulario 30'</span></td><td><span class="tag t-n">Gym 20:15</span></td></tr>
+      <tr><td>Jueves</td><td><span class="tag t-n">Jardín + gym</span></td><td><span class="tag t-l">Logística 15'</span></td><td><span class="tag t-i">Inglés 30' · speaking</span></td><td><span class="tag t-d">Datos 1 h</span></td></tr>
+      <tr><td>Viernes</td><td><span class="tag t-v">Viaje: vocabulario 30'</span></td><td><span class="tag t-n">Libre</span></td><td><span class="tag t-l">Viaje de vuelta: lectura de logística 30'</span></td><td><span class="tag t-n">Gym 20:15</span></td></tr>
+      <tr><td>Sábado</td><td><span class="tag t-d">Datos 10:00 · proyecto 1 h</span></td><td><span class="tag t-n">Libre</span></td><td><span class="tag t-i">Inglés 30' · escritura</span></td><td><span class="tag t-n">Plaza 21:30</span><span class="tag t-v">Vocabulario 20'</span></td></tr>
+      <tr><td>Domingo</td><td><span class="tag t-n">Libre</span></td><td><span class="tag t-n">Libre</span></td><td><span class="tag t-d">Datos 18:00 · repaso 1 h</span><span class="tag t-i">Inglés 20:30 · listening</span></td><td><span class="tag t-v">Vocabulario 20'</span><span class="tag t-n">Plan semanal 15'</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="small">Miércoles y viernes no hay estudio: solo lectura en los viajes. Por semana: datos 5 h, inglés 2 h 30 min, logística 1 h 45 min y vocabulario 1 h 40 min. Cada sesión de datos e inglés termina con 5 minutos de recuperación: cerrás todo y escribís lo que recordás, sin mirar.</p>
+</section>
+
+<div class="filters" aria-label="Filtros del catálogo">
+  <div class="fg"><span>Idioma</span>
+    <button class="chip" data-f="lang" data-v="" aria-pressed="true">Todos</button>
+    <button class="chip" data-f="lang" data-v="ES" aria-pressed="false">Español</button>
+    <button class="chip" data-f="lang" data-v="EN" aria-pressed="false">Inglés</button></div>
+  <div class="fg"><span>Nivel</span>
+    <button class="chip" data-f="lvl" data-v="" aria-pressed="true">Todos</button>
+    <button class="chip" data-f="lvl" data-v="Introductorio" aria-pressed="false">Introductorio</button>
+    <button class="chip" data-f="lvl" data-v="Intermedio" aria-pressed="false">Intermedio</button>
+    <button class="chip" data-f="lvl" data-v="Avanzado" aria-pressed="false">Avanzado</button></div>
+  <div class="fg"><span>Costo</span>
+    <button class="chip" data-f="cost" data-v="free" aria-pressed="true">Solo gratis</button>
+    <button class="chip" data-f="cost" data-v="" aria-pressed="false">Todos</button></div>
+</div>
+
+<div id="catalog" style="display:flex;flex-direction:column;gap:44px"></div>
+
+<div class="foot">
+  <p>Los links van a sitios oficiales, librerías o buscadores. No pude abrirlos todos desde acá: si alguno no carga, buscá el nombre. Las opciones marcadas como «sugerencia mía» no salieron de la búsqueda de hoy. Los precios y la disponibilidad cambian, revisalos antes de comprar.</p>
+  <ul>
+    <li><a href="https://www.coursera.org/professional-certificates/google-data-analytics" target="_blank" rel="noopener">Google Data Analytics Certificate (Coursera)</a></li>
+    <li><a href="https://scmresearch.org/tag/book/" target="_blank" rel="noopener">Lecturas más usadas en cursos de cadena de suministro</a></li>
+    <li><a href="https://www.zlc.edu.es/?p=94978" target="_blank" rel="noopener">MITx MicroMasters en SCM (ZLC)</a></li>
+    <li><a href="https://www.datacamp.com/blog/best-free-resources-to-learn-python-for-data-science" target="_blank" rel="noopener">Recursos gratis de Python para datos (DataCamp)</a></li>
+    <li><a href="https://www.lingoda.com/blog/en/best-websites-to-learn-english/" target="_blank" rel="noopener">Sitios para aprender inglés (Lingoda)</a></li>
+    <li><a href="https://hackceleration.com/es/curso/gratis/sql" target="_blank" rel="noopener">Cursos de SQL gratis en español (Hackceleration)</a></li>
+    <li><a href="https://www.purdue.edu/whin/education/courses/course-page.php?ID=CA043" target="_blank" rel="noopener">Supply Chain Logistics (Purdue)</a></li>
+    <li><a href="https://cursa.app/es/logistica-es" target="_blank" rel="noopener">Cursos de logística gratis (Cursa)</a></li>
+  </ul>
+</div>
+
+</main>
+
+<script>
+var CATS=[
+ {k:'log',id:'s-log',t:'Logística: libros y cursos',d:'Nivel alto, con versión en español cuando existe. «Introductorio» sirve para filtrar si querías arrancar más suave.'},
+ {k:'voc',id:'s-voc',t:'Hablar mejor y vocabulario',d:'Lecturas en español y herramientas para sumar palabras.'},
+ {k:'ing',id:'s-ing',t:'Inglés',d:'Cursos, tutores, libros y opciones específicas de logística.'},
+ {k:'dat',id:'s-dat',t:'Datos',d:'Rutas completas, SQL, Python, estadística, modelos y automatización.'}
+];
+var ITEMS=[
+/* ---- LOGISTICA ---- */
+{id:'l-bow',c:'log',t:'Administración y logística en la cadena de suministros',by:'Bowersox, Closs y Cooper · McGraw-Hill',lang:'ES · EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Equilibra logística y cadena de suministro, con ERP y planificación avanzada','Aparece entre los textos más usados en cursos universitarios','Hay edición en español'],
+ cons:['Es un texto universitario: se consulta más de lo que se lee de corrido','La edición en español es más vieja que la 5.ª en inglés (2019)','Es caro'],
+ links:[['Ficha en Google Books','https://books.google.com/books/about/Administraci%C3%B3n_y_log%C3%ADstica_en_la_caden.html?id=7CpHOQAACAAJ'],['Edición 2019 en inglés','https://www.google.com/search?q=Supply+Chain+Logistics+Management+Bowersox+5th+edition']]},
+{id:'l-cho',c:'log',t:'Administración de la cadena de suministro',by:'Chopra y Meindl · Pearson (Supply Chain Management)',lang:'ES · EN',lvl:'Avanzado',kind:'Libro',cost:'Pago',
+ pros:['Es de los más recomendados en las lecturas de cursos','Cubre estrategia, planeación y operación','En inglés va por la 7.ª edición (2019)'],
+ cons:['Usa mucha matemática de diseño de red e inventarios','Menos centrado en el reparto y transporte del día a día','La edición en español es más vieja que la inglesa'],
+ links:[['Reseña en GS1 México','https://blog.gs1mexico.org/5-libros-sobre-logistica-que-deberias-leer'],['Buscar el libro','https://www.google.com/search?q=Chopra+Meindl+Administraci%C3%B3n+de+la+cadena+de+suministro']]},
+{id:'l-bal',c:'log',t:'Logística: administración de la cadena de suministro',by:'Ronald Ballou · Pearson',lang:'ES',lvl:'Avanzado',kind:'Libro',cost:'Pago',
+ pros:['Referencia clásica en español','Trata servicio al cliente, estrategia de transporte, inventarios y ubicación de depósitos','Sirve como libro de consulta'],
+ cons:['La edición en español de 5.ª ed. es de 2004: la tecnología quedó vieja','Cerca de 800 páginas, denso','Es caro en librerías de Argentina'],
+ links:[['Reseña en GS1 México','https://blog.gs1mexico.org/5-libros-sobre-logistica-que-deberias-leer']]},
+{id:'l-chr',c:'log',t:'Logistics & Supply Chain Management',by:'Martin Christopher · Pearson',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Está entre los textos más usados en los cursos','Mira la logística como una red que crea valor','Más ágil de leer que los textos de ingeniería'],
+ cons:['Solo lo encontré en inglés','Ejemplos de empresas europeas','Poco cálculo: no te enseña a modelar'],
+ links:[['Buscar el libro','https://www.google.com/search?q=Martin+Christopher+Logistics+and+Supply+Chain+Management']]},
+{id:'l-sim',c:'log',t:'Designing and Managing the Supply Chain',by:'Simchi-Levi, Kaminsky y Simchi-Levi · McGraw-Hill',lang:'EN',lvl:'Avanzado',kind:'Libro',cost:'Pago',
+ pros:['Es el texto base de un curso de MIT','Diseño de redes, inventario, contratos y riesgo','Las lecturas del curso están publicadas en MIT OpenCourseWare'],
+ cons:['Muy cuantitativo','Solo en inglés','La edición citada por MIT es de 2003'],
+ links:[['Lecturas del curso en MIT OCW','https://ocw.mit.edu/courses/15-763j-manufacturing-system-and-supply-chain-design-spring-2005/pages/readings/']]},
+{id:'l-hop',c:'log',t:'Factory Physics',by:'Hopp y Spearman · McGraw-Hill',lang:'EN',lvl:'Avanzado',kind:'Libro',cost:'Pago',
+ pros:['Explica cómo la variabilidad y el inventario frenan el flujo','Figura como complemento en listas de MIT y de Warwick'],
+ cons:['Pensado para fábricas más que para transporte','Técnico y largo','Solo en inglés'],
+ links:[['Lista de lecturas de Warwick','https://warwick.rl.talis.com/lists/5DC6E7F0-6CF1-E86A-463B-5F83E5729862/bibliography.html?style=bmj']]},
+{id:'l-goal',c:'log',t:'La Meta (The Goal)',by:'Eliyahu Goldratt',lang:'ES · EN',lvl:'Introductorio',kind:'Libro',cost:'Pago',
+ pros:['Es una novela: se lee rápido','Enseña cuellos de botella y mejora continua','Las ideas sirven para depósitos, despacho y rutas'],
+ cons:['Está ambientada en una fábrica, casi sin transporte','No profundiza en lo técnico'],
+ links:[['Resumen del libro','https://businessology.biz/best-supply-chain-books/'],['Buscar el libro','https://www.google.com/search?q=La+Meta+Goldratt+libro']]},
+{id:'l-rus',c:'log',t:'The Handbook of Logistics and Distribution Management',by:'Rushton, Croucher y Baker · Kogan Page',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Enfoque práctico en distribución, transporte y almacén','Sirve como manual de consulta'],
+ cons:['Solo en inglés','Ejemplos del Reino Unido','Lo vi en listas de recomendados y no pude revisar el contenido'],
+ links:[['Lista de libros de logística','https://edgemontlibrary.org/best-book-about-logistics/']]},
+{id:'l-har',c:'log',t:'Logistics Management and Strategy',by:'Harrison y van Hoek · Pearson',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Un analista lo elige como favorito para planeación y control de producción'],
+ cons:['Solo en inglés','Más estratégico que operativo','Solo lo respalda una opinión en mi búsqueda'],
+ links:[['Reseña del analista','https://estrategiaycompetitividad.wordpress.com/2015/08/03/algunos-de-los-mejores-libros-en-administracion-de-cadena-de-suministro/']]},
+{id:'l-tra',c:'log',t:'Manual de gestión de tráfico de mercancías',by:'Rut Castell · Marge Books · 320 págs.',lang:'ES',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Planificación de cargas y rutas, tipos de flota y costos de transporte','Escrito para departamentos de tráfico y empresas de distribución','Está en español'],
+ cons:['Incluye normativa y seguros de España: parte no aplica en Argentina','Es de consulta, con poca teoría de fondo'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/manual-de-gestion-de-trafico-de-mercancias/9788418532764/']]},
+{id:'l-dig',c:'log',t:'Digitalizar la gestión del transporte',by:'Marge Books · 200 págs.',lang:'ES',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Trata operaciones, tarifas de fletes y visibilidad del transporte','Incluye integración de datos, automatización, IA e IoT','Es corto'],
+ cons:['Enfoque de empresas españolas','Es de gestión: no enseña a programar'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/digitalizar-la-gestion-del-transporte/9788410238169/']]},
+{id:'l-mod',c:'log',t:'Logística y gestión moderna de la cadena de suministro',by:'RA-MA · 356 págs.',lang:'ES',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Módulos de almacén, materiales y transporte, y compras','Dirigido a responsables de logística, operaciones o compras'],
+ cons:['Panorama amplio, menos profundo que Ballou o Chopra','Editorial española'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/logistica-y-gestion-moderna-de-la-cadena-de-suministro/9791387764746/']]},
+{id:'l-s21',c:'log',t:'Logística para el siglo XXI, tomo I: logística inbound',by:'Díaz de Santos',lang:'ES',lvl:'Avanzado',kind:'Libro',cost:'Pago',
+ pros:['Analiza en profundidad la cadena de suministro y sus etapas','Incluye economía circular, costos logísticos y sistemas de información'],
+ cons:['Son dos tomos y el primero cubre solo el lado de entrada (inbound)','No verifiqué si se consigue en Argentina'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/logistica-para-el-siglo-xxi/9788490523100/']]},
+{id:'l-flo',c:'log',t:'Gestión de flotas y localización de vehículos',by:'Adams · también «Gestión y control de flotas y servicios de transporte por carretera»',lang:'ES',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Cubre flotas, planificación, telemática y costos','Está en español'],
+ cons:['Es un manual de formación español','Normativa social y legal de España'],
+ links:[['Ficha en Adams','https://www.adams.es/producto/libros/cursos/libro-gestion-de-flotas-y-localizacion-de-vehiculos/'],['Lista de libros de flotas (Michelin)','https://connectedfleet.michelin.com/es/blog/los-mejores-libros-y-manuales-sobre-gestion-de-flotas-y-logistica/']]},
+{id:'l-gro',c:'log',t:'Growth Logistics',by:'Cristian Ferreyra · Anaya',lang:'ES',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Logística para comercio electrónico','Podés leer el primer capítulo gratis','Está en español'],
+ cons:['Más estrategia de negocio que operación de transporte','No revisé qué tan actuales son los ejemplos'],
+ links:[['Primer capítulo (PDF)','https://www.anayamultimedia.es/primer_capitulo/growth-logistics.pdf']]},
+{id:'l-pri',c:'log',t:'Cadena de suministro: principios, máximas y recomendaciones',by:'Marge Books · 153 págs.',lang:'ES',lvl:'Introductorio',kind:'Libro',cost:'Pago',
+ pros:['Manual de consulta corto: inventarios, almacenes, transporte y distribución','Se termina en pocas semanas'],
+ cons:['Nivel introductorio','Poca profundidad analítica'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/cadena-de-suministro/9788418532504/']]},
+{id:'l-l50',c:'log',t:'Logística 5.0',by:'Disponible en O\'Reilly',lang:'ES',lvl:'',kind:'Libro',cost:'Suscripción',
+ pros:['Se lee online si tenés suscripción a O\'Reilly','Habla de integrar logística y cadena de suministro'],
+ cons:['No pude confirmar el autor ni el nivel','Requiere suscripción'],
+ links:[['Ver en O\'Reilly','https://www.oreilly.com/library/view/logistica-5-0/9788418757433/logistica-5.xhtml']]},
+{id:'l-mit',c:'log',t:'MITx MicroMasters en Supply Chain Management',by:'MIT CTL · edX',lang:'EN',lvl:'Avanzado',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Nivel de posgrado del MIT: cinco cursos y un examen final','Podés auditar gratis y pagar el certificado solo si lo querés','Equivale a un semestre del MIT'],
+ cons:['Está en inglés','Exige estadística y optimización','Certificado pago: 181 € o 273 € por curso según ZLC','El programa completo dura unos 17 meses'],
+ links:[['Sitio del programa','https://micromasters.mit.edu/scm/'],['Detalle en ZLC','https://www.zlc.edu.es/?p=94978']]},
+{id:'l-ctl',c:'log',t:'Cursos sueltos de MIT CTL',by:'Humanitarian Logistics, Sustainable SCM, Supply Chain Analytics',lang:'EN',lvl:'Avanzado',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Podés tomar un tema sin hacer todo el programa','Gratis para participar, con certificado aparte'],
+ cons:['Está en inglés','Algunos cursos tienen fechas de inicio fijas'],
+ links:[['Cursos online de MIT CTL','https://ctl.mit.edu/online-education']]},
+{id:'l-rut',c:'log',t:'Supply Chain Logistics',by:'Rutgers · Coursera',lang:'EN',lvl:'Introductorio',kind:'Curso',cost:'Gratis para auditar',
+ pros:['No pide experiencia previa en logística','Se audita gratis y tiene ayuda financiera completa para el certificado, según Purdue','Unas 10 horas de esfuerzo según Purdue'],
+ cons:['Está en inglés','Nivel de entrada','El certificado se paga'],
+ links:[['Ficha en Purdue','https://www.purdue.edu/whin/education/courses/course-page.php?ID=CA043'],['Lista de cursos gratis (Magaya)','https://www.magaya.com/online-supply-chain-courses/']]},
+{id:'l-isc',c:'log',t:'Cursos de ISCEA en edX',by:'Procurement and Logistics Management y otros',lang:'EN',lvl:'Intermedio',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Se pueden auditar gratis o pagar un certificado a bajo costo','Temas: compras, planificación y herramientas'],
+ cons:['Está en inglés','No encontré detalle de nivel o duración'],
+ links:[['ISCEA en edX','https://www.edx.org/school/iscea']]},
+{id:'l-cc',c:'log',t:'Directorio de cursos de cadena de suministro',by:'Class Central · 689 cursos',lang:'EN',lvl:'',kind:'Directorio',cost:'Gratis',
+ pros:['Compara cursos de Stanford, MIT y otras universidades','Filtra por nivel, duración e idioma'],
+ cons:['Son muchísimos: hay que filtrar','Mayoría en inglés'],
+ links:[['Ver el directorio','https://classcentral.com/subject/supply-chain-management']]},
+{id:'l-csc',c:'log',t:'Certificación CSCP',by:'ASCM',lang:'EN',lvl:'Avanzado',kind:'Certificación',cost:'Pago',note:'Sugerencia mía, no la busqué hoy.',
+ pros:['Credencial reconocida de cadena de suministro'],
+ cons:['Es cara','El examen es en inglés','Revisá requisitos y precio actuales'],
+ links:[['Sitio de ASCM','https://www.ascm.org']]},
+
+{id:'l-sc1',c:'log',top:true,t:'Supply Chain Fundamentals (SC1x)',by:'MITx · edX',lang:'EN',lvl:'Intermedio',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Es el primer curso del MicroMasters de MIT y se audita gratis','Enfoque analítico y práctico de logística y cadena de suministro'],
+ cons:['Está en inglés','Dura unas 15 semanas según ZLC','El certificado se paga'],
+ links:[['Ficha del curso','https://www.tun.com/courses/supply-chain-fundamentals/mitx/'],['Programa completo','https://micromasters.mit.edu/scm/']]},
+{id:'l-ocw',c:'log',t:'Logistics and Supply Chain Management (OpenCourseWare)',by:'MIT OpenCourseWare',lang:'EN',lvl:'Avanzado',kind:'Curso',cost:'Gratis',
+ pros:['Materiales completos de un curso de MIT, sin costo','Modelos de investigación operativa para planificación logística'],
+ cons:['Es de nivel de posgrado','Está en inglés','Es material de curso: no hay tutor ni examen'],
+ links:[['Buscar en OpenCourseWare','https://ocw.mit.edu/search/?q=logistics'],['Descripción del curso','https://rhsupplies.org/activities-resources/laptop/course-finder/logistics-and-supply-chain-management-62']]},
+{id:'l-mec',c:'log',top:true,t:'Logística comercial (módulo de formación profesional)',by:'Ministerio de Educación de España · descarga gratis',lang:'ES',lvl:'Introductorio',kind:'Libro online',cost:'Gratis',
+ pros:['Descarga gratis y en español','Cubre logística en la empresa, picking, transporte, modalidades, rutas de abastecimiento y calidad logística'],
+ cons:['Es material de formación profesional de España','Nivel de entrada a intermedio'],
+ links:[['Descargar','https://libreria.educacion.gob.es/ebook/176064/free_download']]},
+{id:'l-loy',c:'log',t:'Transporte y Logística (apuntes)',by:'Thomas Ian Ashley · Universidad Loyola',lang:'ES',lvl:'Avanzado',kind:'Libro online',cost:'Gratis',
+ pros:['Acceso abierto y en español, con licencia Creative Commons','Apuntes de una materia de Matemática Aplicada'],
+ cons:['Pide matemática','Son apuntes de clase, no un libro pulido'],
+ links:[['Repositorio de la Universidad Loyola','https://hdl.handle.net/20.500.12412/6723']]},
+{id:'l-cur',c:'log',t:'Curso completo de Logística, de básico a avanzado',by:'Cursa · ebook y cursos gratis',lang:'ES',lvl:'Introductorio',kind:'Libro online',cost:'Gratis',
+ pros:['Ebook gratis en español: modalidades de transporte, gestión de flotas, ruta de entrega, costos e indicadores','Menciona ERP, WMS y TMS','La plataforma ofrece 6 cursos de logística gratis'],
+ cons:['El certificado gratis se recibe descargando la app','No pude comprobar la calidad del contenido'],
+ links:[['Ebook gratis','https://cursa.app/es/libro-electronico-gratis/curso-completo-de-logistica-desde-basico-hasta-avanzado'],['Cursos de logística','https://cursa.app/es/logistica-es']]},
+{id:'l-ali',c:'log',t:'Gestión de la cadena de suministro y logística, y Diploma en gestión de almacenes',by:'Alison',lang:'ES',lvl:'Introductorio',kind:'Curso',cost:'Gratis',
+ pros:['Cursos gratuitos en español','Cubren riesgos, mejores prácticas, inventario y almacenes'],
+ cons:['El certificado es pago','Nivel introductorio','El primero figura con apenas 0 a 1 hora de aprendizaje'],
+ links:[['Cadena de suministro y logística','https://alison.com/es/curso/gestion-de-la-cadena-de-suministro-y-logistica'],['Gestión de almacenes y logística','https://alison.com/es/curso/diploma-en-gestion-de-almacenes-y-logistica']]},
+{id:'l-edx',c:'log',t:'Cursos de logística en edX',by:'edX · página en español',lang:'ES · EN',lvl:'',kind:'Directorio',cost:'Gratis para auditar',
+ pros:['Empezás gratis y pagás solo si querés el certificado','Incluye el programa de MIT y otros cursos'],
+ cons:['La mayoría de los cursos está en inglés','Hay que filtrar'],
+ links:[['Ver cursos de logística','https://www.edx.org/es/aprende/logistica']]},
+{id:'l-ser',c:'log',t:'Servicio al cliente desde el punto de vista logístico',by:'Coursera',lang:'ES',lvl:'Introductorio',kind:'Curso',cost:'Revisá si podés auditar',
+ pros:['Está en español','Une servicio al cliente con estrategias logísticas para entregar mejor'],
+ cons:['No verifiqué si se puede auditar gratis','Nivel de entrada'],
+ links:[['Ver en Coursera','https://www.coursera.org/fr-FR/learn/servicio-al-cliente-desde-el-punto-de-vista-logistico']]},
+
+/* ---- HABLAR MEJOR ---- */
+{id:'v-car',c:'voc',t:'Cómo hablar bien en público',by:'Dale Carnegie',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Clásico con ejercicios para perder el miedo y ordenar un discurso','Figura en las listas de oratoria'],
+ cons:['Estilo de autoayuda','Ejemplos antiguos','No amplía vocabulario por sí solo'],
+ links:[['Lista de libros de oratoria','https://www.mercadolibre.com.ar/blog/tr/los-mejores-libros-de-oratoria']]},
+{id:'v-ber',c:'voc',t:'La mente del orador',by:'Scott Berkun',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Técnicas de preparación y manejo de los nervios'],
+ cons:['Pensado para presentar en público','No trabaja vocabulario'],
+ links:[['Reseña en El País','https://www.elpais.com.co/cultura/que-libro-leer-para-tener-buena-oratoria-1746.html']]},
+{id:'v-est',c:'voc',t:'Estilo rico, estilo pobre',by:'Luis Magrinyà · Debate · 304 págs.',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Claves para expresarse con claridad y precisión','Una reseña lo destaca porque ayuda a no caer en la pedantería'],
+ cons:['Más sobre escritura que sobre charla','Edición española: en Marcial Pons figuraba sin stock'],
+ links:[['Ficha en Marcial Pons','https://www.marcialpons.es/libros/estilo-rico-estilo-pobre/9788418619540/']]},
+{id:'v-lib',c:'voc',top:true,t:'Libro de estilo de la lengua española',by:'RAE y ASALE',lang:'ES',lvl:'',kind:'Libro online',cost:'Gratis',
+ pros:['Gratis y online','Pautas de lectura y pronunciación, gramática y léxico'],
+ cons:['Se consulta, no se lee de corrido','No trae ejercicios'],
+ links:[['Leer en la web de la RAE','https://www.rae.es/libro-estilo-lengua-espa%C3%B1ola']]},
+{id:'v-dle',c:'voc',top:true,t:'DLE, Diccionario panhispánico de dudas y Fundéu',by:'RAE y Fundéu',lang:'ES',lvl:'',kind:'Herramienta',cost:'Gratis',
+ pros:['Resuelven dudas de uso en el momento','El panhispánico incluye usos de toda Latinoamérica'],
+ cons:['Tenés que acordarte de abrirlos','No arman vocabulario nuevo solos'],
+ links:[['Diccionario de la lengua','https://dle.rae.es'],['Diccionario panhispánico de dudas','https://www.rae.es/dpd'],['Fundéu','https://www.fundeu.es']]},
+{id:'v-mol',c:'voc',t:'Diccionario de uso del español',by:'María Moliner',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Diccionario de uso con ejemplos, alternativa al de la RAE','Útil para elegir la palabra justa'],
+ cons:['Son dos volúmenes','Puede ser caro'],
+ links:[['Buscar el libro','https://www.google.com/search?q=Diccionario+de+uso+del+espa%C3%B1ol+Mar%C3%ADa+Moliner']]},
+{id:'v-gom',c:'voc',t:'Hablar y escribir correctamente',by:'Leonardo Gómez Torrego · Arco Libros',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Explicaciones breves con ejemplos y ejercicios','Sirve para estudiantes'],
+ cons:['Gramática normativa, tono escolar','Más corrección que vocabulario'],
+ links:[['Lista de libros de ortografía','https://www.educaciontrespuntocero.com/libros/libros-mejorar-la-ortografia/']]},
+{id:'v-cor',c:'voc',t:'El libro del español correcto',by:'Paredes García, Álvaro García y otros · Instituto Cervantes',lang:'ES',lvl:'',kind:'Libro',cost:'Pago',
+ pros:['Claves para escribir y también para hablar bien en español','Sale en una lista de libros recomendados'],
+ cons:['Más corrección que vocabulario nuevo'],
+ links:[['Lista de libros de ortografía','https://www.educaciontrespuntocero.com/libros/libros-mejorar-la-ortografia/']]},
+{id:'v-ank',c:'voc',t:'Anki para palabras nuevas',by:'Repetición espaciada',lang:'ES · EN',lvl:'',kind:'Herramienta',cost:'Gratis en computadora',note:'Sugerencia mía.',
+ pros:['Repasa cada palabra justo antes de que se te olvide','Sirve también para inglés y para SQL'],
+ cons:['Pide constancia diaria','Armar las tarjetas lleva tiempo','La app de iPhone es paga'],
+ links:[['Sitio de Anki','https://apps.ankiweb.net']]},
+
+/* ---- INGLES ---- */
+{id:'i-bc',c:'ing',top:true,t:'LearnEnglish del British Council',by:'British Council',lang:'EN',lvl:'Introductorio',kind:'Sitio',cost:'Gratis',
+ pros:['Gratis, con test de nivel','Ejercicios por habilidad y por nivel, de A1 a C1','Tiene sección de inglés de negocios'],
+ cons:['Sin corrección de una persona','Poco speaking real'],
+ links:[['Test de nivel','https://learnenglish.britishcouncil.org/test-your-english'],['Mapa del sitio','https://learnenglish.britishcouncil.org/sitemap']]},
+{id:'i-bbc',c:'ing',top:true,t:'BBC Learning English',by:'BBC',lang:'EN',lvl:'Introductorio',kind:'Sitio',cost:'Gratis',
+ pros:['Gratis y sin registrarte','Videos y podcasts de buena calidad'],
+ cons:['No tiene clases interactivas','Se centra en inglés británico'],
+ links:[['Ir al sitio','https://www.bbc.co.uk/learningenglish']]},
+{id:'i-cam',c:'ing',top:true,t:'Actividades gratis de Cambridge English',by:'Cambridge · Write & Improve · Virtually Anywhere',lang:'EN',lvl:'Intermedio',kind:'Sitio',cost:'Gratis',
+ pros:['Más de 170 actividades gratis','Serie de audio Virtually Anywhere para B1-B2','Write & Improve corrige tu escritura en segundos'],
+ cons:['Son actividades sueltas, sin ruta completa','No incluye speaking'],
+ links:[['Actividades de Cambridge','https://www.cambridgeenglish.org/learning-english/'],['Write & Improve','https://writeandimprove.com']]},
+{id:'i-duo',c:'ing',t:'Duolingo',by:'Duolingo',lang:'EN',lvl:'Introductorio',kind:'App',cost:'Gratis con compras',
+ pros:['Lecciones cortas que ayudan a sostener el hábito','Tiene test para ubicar el nivel'],
+ cons:['Llega hasta B2','Poca conversación real'],
+ links:[['Sitio de Duolingo','https://www.duolingo.com']]},
+{id:'i-bus',c:'ing',t:'Busuu',by:'Busuu',lang:'EN',lvl:'Introductorio',kind:'App',cost:'Revisá el plan',
+ pros:['Lingoda la destaca para practicar pronunciación'],
+ cons:['Revisá qué parte es gratis y qué parte es paga'],
+ links:[['Sitio de Busuu','https://www.busuu.com']]},
+{id:'i-ita',c:'ing',t:'Clases con tutor en italki',by:'italki',lang:'EN',lvl:'',kind:'Tutor',cost:'Pago por clase',
+ pros:['Elegís profesor y horario','Clases individuales de speaking'],
+ cons:['Cada clase se paga','La calidad varía según el profesor'],
+ links:[['Sitio de italki','https://www.italki.com']]},
+{id:'i-lin',c:'ing',t:'Lingoda',by:'Lingoda',lang:'EN',lvl:'',kind:'Clases',cost:'Suscripción',
+ pros:['Horarios flexibles y planes de suscripción','Fuerte para hablar con confianza'],
+ cons:['Más caro que las apps','La escritura no es su foco'],
+ links:[['Reseña de Lingoda','https://www.lingoda.com/blog/en/best-websites-to-learn-english/']]},
+{id:'i-pre',c:'ing',t:'Preply',by:'Preply',lang:'EN',lvl:'',kind:'Tutor',cost:'Pago por clase',
+ pros:['Tutores personalizados','Clases de 1 hora desde US$10 según la propia página'],
+ cons:['No es gratis','El precio cambia según el tutor'],
+ links:[['Reseña de Preply','https://preply.com/en/blog/websites-to-learn-english']]},
+{id:'i-bcs',c:'ing',t:'Curso Self-Study del British Council',by:'British Council',lang:'EN',lvl:'Introductorio',kind:'Curso',cost:'Suscripción',
+ pros:['Ruta estructurada de A1 a C1','Pensado para la vida diaria y el trabajo'],
+ cons:['Requiere suscripción','Hay que mantener el ritmo solo'],
+ links:[['Ver el curso','https://www.britishcouncil.org/english/learn-online/learnenglish-subscription']]},
+{id:'i-viu',c:'ing',t:'English Vocabulary in Use y English Grammar in Use',by:'Cambridge y Raymond Murphy',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Unidades temáticas con ejercicios graduales','Clásicos de autoestudio'],
+ cons:['Pide disciplina','Los libros físicos cuestan'],
+ links:[['Lista de libros para aprender inglés','https://www.mercadolibre.com.ar/blog/tr/los-mejores-libros-para-aprender-ingles']]},
+{id:'i-par',c:'ing',t:'La guía de los tiempos verbales',by:'Enrique Pardo',lang:'ES',lvl:'Introductorio',kind:'Libro',cost:'Pago',
+ pros:['Escrito para hispanohablantes','Explica los tiempos verbales con claridad'],
+ cons:['Solo gramática de tiempos verbales','No trabaja vocabulario'],
+ links:[['Lista de libros para aprender inglés','https://www.mercadolibre.com.ar/blog/tr/los-mejores-libros-para-aprender-ingles']]},
+{id:'i-efl',c:'ing',t:'English for Logistics',by:'Marion Grussendorf · Oxford Express Series · 96 págs.',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['Curso corto: 25 a 30 horas','Cubre transporte y envíos, depósito, documentación y finanzas','Nivel B1-B2'],
+ cons:['Es de 2009 y en algunas tiendas figura sin stock','El PDF digital no trae el audio'],
+ links:[['En AbeBooks','https://www.abebooks.com/9780194579452/English-Logistics-Express-Series-Oxford-019457945X/plp'],['PDF digital en Hive','https://www.hive.co.uk/Product/Marion-Grussendorf/Express-Series-English-for-Logistics/18760921']]},
+{id:'i-udm',c:'ing',t:'Effective English for Logistics',by:'Curso de Udemy',lang:'EN',lvl:'Intermedio',kind:'Curso',cost:'Pago',
+ pros:['Para quienes trabajan en logística: administración, depósito, gestión','Nivel B1 con lectura y escritura'],
+ cons:['Es pago','Poco speaking'],
+ links:[['Ver en Udemy','https://www.udemy.com/course/effective-english-for-logistics/']]},
+{id:'i-oak',c:'ing',t:'Supply Chain & Logistics English Vocabulary',by:'Oak Business English Series',lang:'EN',lvl:'Intermedio',kind:'Libro',cost:'Pago',
+ pros:['15 capítulos: compras, inventarios, transporte, demanda y sostenibilidad','Vocabulario de comercio global'],
+ cons:['Es vocabulario más que práctica de hablar','Es pago'],
+ links:[['Ficha en Indigo','https://www.indigo.ca/products/oak-supply-chain-logistics-english-vocabulary-key-logistics-and-supply-chain-terms-for-global-trade']]},
+{id:'i-ted',c:'ing',t:'TED Talks',by:'TED',lang:'EN',lvl:'Intermedio',kind:'Videos',cost:'Gratis',
+ pros:['Gratis, con temas variados','Tienen subtítulos'],
+ cons:['No trae ejercicios','Cuesta si recién estás en A2'],
+ links:[['Ver charlas','https://www.ted.com/talks']]},
+
+/* ---- DATOS ---- */
+{id:'d-goo',c:'dat',t:'Google Data Analytics Professional Certificate',by:'Google · Coursera',lang:'EN',lvl:'Introductorio',kind:'Ruta completa',cost:'Pago (Coursera Plus)',
+ pros:['Ruta de 9 cursos con caso final','Enseña hojas de cálculo, SQL, R y Tableau, e incluye un curso de Python de 27 h','Da un certificado de Google'],
+ cons:['Pide unos 6 meses a 10 h por semana y tu plan tiene 5 h','Tiene costo','Está en inglés, con subtítulos en español'],
+ links:[['Ver en Coursera','https://www.coursera.org/professional-certificates/google-data-analytics']]},
+{id:'d-kag',c:'dat',top:true,t:'Kaggle Learn',by:'Kaggle',lang:'EN',lvl:'Introductorio',kind:'Microcursos',cost:'Gratis',
+ pros:['Microcursos de Python, pandas, visualización, SQL y machine learning','Datos reales en notebooks dentro del navegador, sin fecha de inicio','Cada curso lleva de 2 a 4 horas y da un certificado de finalización gratis'],
+ cons:['Poca teoría','Está en inglés','El certificado no equivale a uno universitario'],
+ links:[['Ver los cursos','https://www.kaggle.com/learn']]},
+{id:'d-fcc',c:'dat',t:'Data Analysis with Python',by:'freeCodeCamp',lang:'EN',lvl:'Intermedio',kind:'Ruta completa',cost:'Gratis',
+ pros:['Certificación gratis que se logra con 5 proyectos','Su curso Scientific Computing with Python figura entre los mejores gratis'],
+ cons:['Una lista lo estima en unas 300 horas','Está en inglés','Con 5 h por semana es una ruta larga'],
+ links:[['Ir a freeCodeCamp','https://www.freecodecamp.org/learn']]},
+{id:'d-cs5',c:'dat',t:'CS50\'s Introduction to Programming with Python',by:'Harvard · edX',lang:'EN',lvl:'Introductorio',kind:'Curso',cost:'Gratis (certificado pago)',
+ pros:['Una lista lo califica como el mejor curso de Python para empezar','Gratis, con certificado opcional (US$149 según esa lista)','Los ejercicios te enseñan a pensar como programador'],
+ cons:['Es Python general, no de datos','Está en inglés','Es exigente'],
+ links:[['Sitio del curso','https://cs50.harvard.edu/python/'],['Lista de cursos gratis','https://gondamol.github.io/posts/16-free-data-courses-2025/index.html']]},
+{id:'d-py4',c:'dat',t:'Python for Everybody',by:'Charles Severance',lang:'EN',lvl:'Introductorio',kind:'Curso',cost:'Gratis',
+ pros:['Gratis, por video y pensado para principiantes'],
+ cons:['Es Python general','Está en inglés'],
+ links:[['Sitio del curso','https://www.py4e.com']]},
+{id:'d-mck',c:'dat',t:'Python for Data Analysis (3.ª edición)',by:'Wes McKinney · acceso abierto',lang:'EN',lvl:'Intermedio',kind:'Libro online',cost:'Gratis',
+ pros:['Gratis online','Profundiza en pandas'],
+ cons:['Es denso','Está en inglés','Conviene después de saber Python básico'],
+ links:[['Leer online','https://wesmckinney.com/book/']]},
+{id:'d-dc',c:'dat',t:'DataCamp',by:'DataCamp',lang:'EN',lvl:'Introductorio',kind:'Plataforma',cost:'Gratis para empezar, luego pago',
+ pros:['Ejercicios en el navegador sin instalar nada','Pandas, NumPy y SQL desde los primeros cursos','Después de la parte gratis cuesta unos US$25 al mes'],
+ cons:['El ranking que lo pone primero es de la propia empresa','Hay que pagar para seguir','Cuesta pasar a proyectos propios'],
+ links:[['Comparativa de DataCamp','https://www.datacamp.com/blog/best-online-platforms-to-learn-python-for-data-science']]},
+{id:'d-dq',c:'dat',t:'Dataquest',by:'Dataquest',lang:'EN',lvl:'Introductorio',kind:'Plataforma',cost:'Pago',
+ pros:['Enfocado en carrera, con rutas guiadas','Cubre Python, SQL, R, visualización y machine learning'],
+ cons:['Es pago','La comparación que lo respalda es de su propio blog'],
+ links:[['Comparativa de Dataquest','https://www.dataquest.io/blog/datacamp-alternatives/']]},
+{id:'d-sqb',c:'dat',t:'SQLBolt',by:'SQLBolt',lang:'EN',lvl:'Introductorio',kind:'Interactivo',cost:'Gratis',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Lecciones interactivas cortas','Buen primer paso en SQL'],
+ cons:['Nivel básico','Está en inglés'],
+ links:[['Ir a SQLBolt','https://sqlbolt.com']]},
+{id:'d-mod',c:'dat',t:'Tutorial de SQL de Mode',by:'Mode',lang:'EN',lvl:'Intermedio',kind:'Tutorial',cost:'Gratis',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Gratis','Llega a funciones de ventana y análisis más avanzados'],
+ cons:['Está en inglés','Más denso que SQLBolt'],
+ links:[['Ir al tutorial','https://mode.com/sql-tutorial/']]},
+{id:'d-sqz',c:'dat',t:'SQLZoo',by:'SQLZoo',lang:'EN',lvl:'Introductorio',kind:'Interactivo',cost:'Gratis',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Ejercicios con respuesta inmediata'],
+ cons:['Interfaz antigua','Está en inglés'],
+ links:[['Ir a SQLZoo','https://sqlzoo.net']]},
+{id:'d-lem',c:'dat',t:'DataLemur',by:'DataLemur',lang:'EN',lvl:'Intermedio',kind:'Práctica',cost:'Gratis y pago',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Preguntas de SQL tipo entrevista de datos'],
+ cons:['Más difícil si recién empezás','Revisá qué parte es paga'],
+ links:[['Ir a DataLemur','https://datalemur.com']]},
+{id:'d-kha',c:'dat',t:'Estadística y probabilidad',by:'Khan Academy',lang:'ES · EN',lvl:'Introductorio',kind:'Curso',cost:'Gratis',
+ pros:['Gratis, con videos y ejercicios','Hay versión en español'],
+ cons:['No trae código','Hay que ir a Python por otro lado'],
+ links:[['Versión en español','https://es.khanacademy.org/math/statistics-probability']]},
+{id:'d-sci',c:'dat',t:'Documentación de scikit-learn',by:'scikit-learn',lang:'EN',lvl:'Intermedio',kind:'Documentación',cost:'Gratis',
+ pros:['Oficial y gratis, para tus primeros modelos'],
+ cons:['Es documentación, no un curso','Está en inglés'],
+ links:[['Ir a la documentación','https://scikit-learn.org/stable/']]},
+{id:'d-ng',c:'dat',t:'Machine Learning Specialization',by:'Andrew Ng · Coursera',lang:'EN',lvl:'Intermedio',kind:'Curso',cost:'Revisá si podés auditarlo',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Curso muy conocido para entender machine learning'],
+ cons:['Está en inglés','Pide matemática de nivel intermedio','Revisá el precio y si se puede auditar'],
+ links:[['Ver en Coursera','https://www.coursera.org/specializations/machine-learning-introduction']]},
+{id:'d-mia',c:'dat',t:'Supply Chain Analytics (CTL.SC0x)',by:'MIT · edX',lang:'EN',lvl:'Avanzado',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Cruza datos y logística: estadística, regresión y optimización','Es parte de los cursos de MIT sobre cadena de suministro'],
+ cons:['Está en inglés','Es matemático','Tiene fechas de inicio: el listado muestra enero de 2025'],
+ links:[['Cursos de MIT','https://openlearning.mit.edu/taxonomy/term/12'],['Cursos online de MIT CTL','https://ctl.mit.edu/online-education']]},
+{id:'d-hf',c:'dat',t:'Cursos de Hugging Face',by:'Hugging Face',lang:'EN',lvl:'Avanzado',kind:'Cursos',cost:'Gratis',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Gratis, para IA aplicada'],
+ cons:['Está en inglés','Pide Python y base de machine learning'],
+ links:[['Ir a Hugging Face Learn','https://huggingface.co/learn']]},
+{id:'d-atb',c:'dat',t:'Automate the Boring Stuff with Python',by:'Al Sweigart',lang:'EN',lvl:'Introductorio',kind:'Libro online',cost:'Gratis',note:'Sugerencia mía, no figuró en la búsqueda.',
+ pros:['Gratis online','Enseña a automatizar tareas con scripts'],
+ cons:['Está en inglés','No es de análisis de datos'],
+ links:[['Leer online','https://automatetheboringstuff.com']]},
+{id:'d-ase',c:'dat',top:true,t:'AprendeSQL',by:'midudev',lang:'ES',lvl:'Introductorio',kind:'Interactivo',cost:'Gratis',
+ pros:['29 lecciones con un editor en cada una, y exámenes','Certificado en PDF gratis, y las lecciones no piden cuenta','Está en español'],
+ cons:['Nivel inicial','Lo conocí por una comparativa de cursos y no lo probé'],
+ links:[['Comparativa de cursos de SQL gratis','https://hackceleration.com/es/curso/gratis/sql']]},
+{id:'d-msl',c:'dat',t:'Ruta de Transact-SQL en Microsoft Learn',by:'Microsoft',lang:'ES',lvl:'Introductorio',kind:'Ruta',cost:'Gratis',
+ pros:['6 módulos gratis','Útil si tu empresa usa SQL Server o Azure'],
+ cons:['Es el dialecto de SQL Server','Contenido muy atado a Microsoft'],
+ links:[['Comparativa de cursos de SQL gratis','https://hackceleration.com/es/curso/gratis/sql'],['Microsoft Learn','https://learn.microsoft.com/es-es/training/']]},
+{id:'d-fes',c:'dat',top:true,t:'Certificación de Python en español',by:'freeCodeCamp',lang:'ES',lvl:'Introductorio',kind:'Ruta completa',cost:'Gratis',
+ pros:['Gratis y en español','Cierra con un examen de 90 preguntas que da una certificación verificada y pública','Empezás con una cuenta gratuita'],
+ cons:['Es Python general, no de datos','El examen final exige haber estudiado bien'],
+ links:[['Nota con detalles','https://trabajarporelmundo.org/freecodecamp-certificacion-python-gratis/'],['freeCodeCamp en español','https://www.freecodecamp.org/espanol/learn']]},
+{id:'d-msa',c:'dat',t:'Fundamentos profesionales del análisis de datos',by:'Microsoft y LinkedIn · edX',lang:'ES',lvl:'Introductorio',kind:'Curso',cost:'Gratis para auditar',
+ pros:['Se imparte completamente en español','Unas 4 semanas, de Python básico a bases de datos'],
+ cons:['No verifiqué si el certificado es gratis','Nivel introductorio'],
+ links:[['Lista de cursos gratis de análisis de datos','https://www.generacionuniversitaria.com.mx/?p=18782'],['edX en español','https://www.edx.org/es']]},
+{id:'d-uc',c:'dat',t:'Especialización en SQL para análisis de datos',by:'UC Davis · Coursera',lang:'EN',lvl:'Introductorio',kind:'Especialización',cost:'Gratis para auditar',
+ pros:['Unas 4 semanas a 10 h por semana','Nivel principiante, según la lista'],
+ cons:['Está en inglés','Lo recomienda una lista de terceros: revisá si hoy se puede auditar'],
+ links:[['Lista de cursos de SQL','https://www.guru99.com/es/best-sql-certification-courses.html']]},
+{id:'d-san',c:'dat',t:'Santander Open Academy con Coursera',by:'Cupos gratis',lang:'ES · EN',lvl:'',kind:'Becas',cost:'Gratis (cupos limitados)',
+ pros:['Cupos gratis en cursos de datos e IA, con certificado oficial de Coursera','Una convocatoria incluía a Argentina','Cerca de 5000 cursos están disponibles en español'],
+ cons:['Cupos y fechas limitados: una convocatoria cerraba el 19 de marzo','Revisá si hay una abierta ahora'],
+ links:[['Nota sobre la convocatoria','https://www.cronista.com/espana/actualidad-es/santander-lanza-miles-de-becas-gratuitas-para-conseguir-trabajo-mas-rapido-y-con-sueldos-altos'],['Santander Open Academy','https://www.santanderopenacademy.com']]},
+{id:'d-pro',c:'dat',t:'Proyecto con tus propios datos de viajes',by:'Práctica propia',lang:'ES',lvl:'',kind:'Proyecto',cost:'Gratis',
+ pros:['Practicás con datos que ya conocés','Queda como proyecto de portfolio'],
+ cons:['Sin guía paso a paso','Hay que limpiar datos reales'],
+ links:[]}
+];
+
+var KEY='plan-estudio-v2';
+var state={chosen:{},done:{},custom:[]};
+var filt={lang:'',lvl:'',cost:'free'};
+var cardBtn={},cardEl={};
+var ref=null,saving=false,dirty=false;
+
+function h(tag,attrs,kids){
+  var e=document.createElement(tag);
+  for(var k in (attrs||{})){
+    if(k==='class'){e.className=attrs[k]}
+    else if(k==='text'){e.textContent=attrs[k]}
+    else if(k.slice(0,2)==='on'){e.addEventListener(k.slice(2),attrs[k])}
+    else{e.setAttribute(k,attrs[k])}
+  }
+  (kids||[]).forEach(function(c){if(c==null)return;e.appendChild(typeof c==='string'?document.createTextNode(c):c)});
+  return e;
+}
+function isFree(it){return it.cost.indexOf('Gratis')===0&&!/luego|y pago|Revis/.test(it.cost)}
+function ok(u){return typeof u==='string'&&u.indexOf('https://')===0}
+function norm(s){
+  var o={chosen:{},done:{},custom:[]};
+  if(!s||typeof s!=='object')return o;
+  var k;
+  if(s.chosen&&typeof s.chosen==='object'){for(k in s.chosen){if(s.chosen[k]===true)o.chosen[k]=true}}
+  if(s.done&&typeof s.done==='object'){for(k in s.done){if(s.done[k]===true)o.done[k]=true}}
+  if(Array.isArray(s.custom)){s.custom.forEach(function(c){
+    if(c&&typeof c.id==='string'&&typeof c.t==='string'){o.custom.push({id:c.id,c:typeof c.c==='string'?c.c:'log',t:c.t.slice(0,200),u:ok(c.u)?c.u:''})}
+  })}
+  return o;
+}
+function setStatus(m){
+  var t={db:'Tu avance se guarda en tu cuenta y lo ves en cualquier dispositivo.',
+         local:'Tu avance se guarda solo en este navegador.',
+         slow:'No pude conectar con tu cuenta todavía: lo que ves puede estar desactualizado.'};
+  document.getElementById('status').textContent=t[m]||'';
+}
+function loadLocal(){try{var r=localStorage.getItem(KEY);if(r)state=norm(JSON.parse(r))}catch(e){}}
+async function flush(){
+  if(!ref||saving)return;
+  saving=true;
+  try{
+    while(dirty){dirty=false;await ref.set(JSON.parse(JSON.stringify(state)))}
+    setStatus('db');
+  }catch(e){setStatus('local')}
+  saving=false;
+}
+function persist(){
+  try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+  dirty=true;flush();
+}
+function catName(k){for(var i=0;i<CATS.length;i++){if(CATS[i].k===k)return CATS[i].t}return k}
+function byId(id){for(var i=0;i<ITEMS.length;i++){if(ITEMS[i].id===id)return ITEMS[i]}return null}
+
+function renderPlan(){
+  var box=document.getElementById('planlist');
+  box.textContent='';
+  var total=0,done=0;
+  CATS.forEach(function(cat){
+    var rows=[];
+    ITEMS.forEach(function(it){if(it.c===cat.k&&state.chosen[it.id])rows.push({id:it.id,t:it.t,u:it.links.length?it.links[0][1]:'',custom:false})});
+    state.custom.forEach(function(c){if(c.c===cat.k)rows.push({id:c.id,t:c.t,u:c.u,custom:true})});
+    if(!rows.length)return;
+    var g=h('div',{class:'pgroup'},[h('h3',{text:cat.t})]);
+    rows.forEach(function(r){
+      total++;var d=!!state.done[r.id];if(d)done++;
+      var cb=h('input',{type:'checkbox',id:'pl-'+r.id,'aria-label':'Completado: '+r.t});
+      cb.checked=d;
+      cb.addEventListener('change',function(){
+        if(cb.checked){state.done[r.id]=true}else{delete state.done[r.id]}
+        persist();renderPlan();
+      });
+      var title=r.u?h('a',{href:r.u,target:'_blank',rel:'noopener',class:'ti',text:r.t}):h('span',{class:'ti',text:r.t});
+      var rm=h('button',{type:'button',class:'linkbtn',text:'Quitar'});
+      rm.addEventListener('click',function(){
+        if(r.custom){state.custom=state.custom.filter(function(c){return c.id!==r.id})}
+        else{delete state.chosen[r.id]}
+        delete state.done[r.id];
+        persist();renderPlan();syncCards();
+      });
+      g.appendChild(h('div',{class:'prow'+(d?' done':'')},[cb,h('div',{class:'tx'},[title]),rm]));
+    });
+    box.appendChild(g);
+  });
+  if(!total){box.appendChild(h('p',{class:'empty',text:'Elegí opciones en el catálogo con «Sumar a mi plan» o agregá una propia con su link.'}))}
+  document.getElementById('prog').textContent=total?(done+' de '+total+' completados'):'Todavía no elegiste nada.';
+  document.getElementById('barfill').style.width=(total?Math.round(done/total*100):0)+'%';
+}
+function syncCards(){
+  ITEMS.forEach(function(it){
+    var on=!!state.chosen[it.id];
+    var b=cardBtn[it.id],c=cardEl[it.id];
+    if(!b)return;
+    b.textContent=on?'En mi plan':'Sumar a mi plan';
+    b.setAttribute('aria-pressed',on?'true':'false');
+    c.classList.toggle('in',on);
+  });
+}
+function applyFilters(){
+  CATS.forEach(function(cat){
+    var shown=0,all=0;
+    ITEMS.forEach(function(it){
+      if(it.c!==cat.k)return;
+      all++;
+      var okL=!filt.lang||it.lang.indexOf(filt.lang)>-1;
+      var okV=!filt.lvl||!it.lvl||it.lvl===filt.lvl;
+      var okC=!filt.cost||isFree(it);
+      var vis=okL&&okV&&okC;
+      cardEl[it.id].hidden=!vis;
+      if(vis)shown++;
+    });
+    var ct=document.getElementById('cnt-'+cat.k);
+    if(ct)ct.textContent=shown+' de '+all+' opciones';
+  });
+}
+function buildCard(it){
+  var meta=h('div',{class:'meta'},[h('span',{text:it.kind}),h('span',{text:it.lang}),it.lvl?h('span',{text:it.lvl}):null,h('span',{text:it.cost}),it.top?h('span',{class:'top',text:'Favorita gratis'}):null]);
+  var pros=h('ul',{class:'pc p'},it.pros.map(function(x){return h('li',{text:x})}));
+  var cons=h('ul',{class:'pc c'},it.cons.map(function(x){return h('li',{text:x})}));
+  var links=h('div',{class:'links'},it.links.map(function(l){return h('a',{href:l[1],target:'_blank',rel:'noopener',text:l[0]})}));
+  var btn=h('button',{type:'button',class:'btn','aria-pressed':'false',text:'Sumar a mi plan'});
+  btn.addEventListener('click',function(){
+    if(state.chosen[it.id]){delete state.chosen[it.id];delete state.done[it.id]}else{state.chosen[it.id]=true}
+    persist();renderPlan();syncCards();
+  });
+  var el=h('article',{class:'card',style:'border-top-color:var(--'+it.c+')'},[
+    h('h3',{text:it.t}),h('p',{class:'by',text:it.by}),meta,pros,cons,
+    it.links.length?links:null,it.note?h('p',{class:'note',text:it.note}):null,btn
+  ]);
+  cardBtn[it.id]=btn;cardEl[it.id]=el;
+  return el;
+}
+function buildCatalog(){
+  var root=document.getElementById('catalog');
+  CATS.forEach(function(cat){
+    var grid=h('div',{class:'grid'});
+    var list=ITEMS.filter(function(it){return it.c===cat.k}).map(function(it,i){return {it:it,i:i}});
+    list.sort(function(a,b){
+      var ra=a.it.top?0:(isFree(a.it)?1:2),rb=b.it.top?0:(isFree(b.it)?1:2);
+      return ra-rb||a.i-b.i;
+    });
+    list.forEach(function(o){grid.appendChild(buildCard(o.it))});
+    root.appendChild(h('section',{id:cat.id},[
+      h('h2',{},[cat.t+' ',h('span',{class:'count',id:'cnt-'+cat.k})]),
+      h('p',{class:'small',text:cat.d}),
+      grid
+    ]));
+  });
+}
+document.getElementById('addform').addEventListener('submit',function(e){
+  e.preventDefault();
+  var t=document.getElementById('addtitle').value.trim();
+  var u=document.getElementById('addurl').value.trim();
+  var c=document.getElementById('addcat').value;
+  var err=document.getElementById('adderr');
+  if(!t){err.textContent='Escribí qué querés estudiar.';return}
+  if(u&&!ok(u)){err.textContent='El link tiene que empezar con https://';return}
+  err.textContent='';
+  state.custom.push({id:'c'+Date.now().toString(36)+Math.floor(Math.random()*1000).toString(36),c:c,t:t.slice(0,200),u:u});
+  document.getElementById('addtitle').value='';document.getElementById('addurl').value='';
+  persist();renderPlan();
+});
+['addtitle','addurl'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){document.getElementById('adderr').textContent=''})});
+document.querySelectorAll('.chip').forEach(function(b){
+  b.addEventListener('click',function(){
+    var f=b.getAttribute('data-f');filt[f]=b.getAttribute('data-v');
+    document.querySelectorAll('.chip[data-f="'+f+'"]').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});
+    applyFilters();
+  });
+});
+
+loadLocal();
+buildCatalog();
+applyFilters();
+renderPlan();
+syncCards();
+setStatus('local');
+
+(async function(){
+  try{
+    if(typeof claude==='undefined'||!claude.use)return;
+    var db=await claude.use('db');
+    var user=await claude.use('user');
+    var id=user?await user.id():null;
+    if(!db||!id)return;
+    ref=db.doc('data/users/'+id+'/plan');
+    var first=true;
+    var timer=setTimeout(function(){setStatus('slow')},10000);
+    ref.onSnapshot(function(snap){
+      if(snap.metadata.hasPendingWrites)return;
+      if(snap.exists){
+        clearTimeout(timer);
+        state=norm(snap.data());
+        try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}
+        renderPlan();syncCards();setStatus('db');
+      }else if(!snap.metadata.fromCache){
+        clearTimeout(timer);
+        if(first){dirty=true;flush()}
+      }
+      first=false;
+    },function(){clearTimeout(timer);setStatus('local')});
+  }catch(e){setStatus('local')}
+})();
+</script>
+<script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(function(){});</script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+{
+ "cat": {
+  "fam": [
+   "Familia",
+   "#888780"
+  ],
+  "trn": [
+   "Gym",
+   "#1D9E75"
+  ],
+  "stu": [
+   "Datos",
+   "#7F77DD"
+  ],
+  "lg": [
+   "Logística",
+   "#EF9F27"
+  ],
+  "voc": [
+   "Vocabulario",
+   "#D4537E"
+  ],
+  "eng": [
+   "Inglés",
+   "#378ADD"
+  ],
+  "wk": [
+   "Caminata",
+   "#D85A30"
+  ],
+  "fr": [
+   "Libre",
+   "#639922"
+  ],
+  "wrk": [
+   "Trabajo",
+   "#B4B2A9"
+  ],
+  "pl": [
+   "Plan semanal",
+   "#5F5E5A"
+  ]
+ },
+ "days": {
+  "1": [
+   {
+    "a": "07:15",
+    "b": "08:00",
+    "t": "Llevar a Helena al jardín",
+    "c": "fam",
+    "chk": false,
+    "k": "fam0715"
+   },
+   {
+    "a": "08:00",
+    "b": "09:15",
+    "t": "Gym",
+    "c": "trn",
+    "chk": true,
+    "k": "trn0800"
+   },
+   {
+    "a": "09:15",
+    "b": "18:00",
+    "t": "Trabajo",
+    "c": "wrk",
+    "chk": false,
+    "k": "wrk0915"
+   },
+   {
+    "a": "13:00",
+    "b": "13:15",
+    "t": "Logística 15 min",
+    "c": "lg",
+    "chk": true,
+    "k": "lg1300",
+    "n": "Lectura de logística"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Inglés 30 min",
+    "c": "eng",
+    "chk": true,
+    "k": "eng1800",
+    "n": "Gramática"
+   },
+   {
+    "a": "21:00",
+    "b": "21:30",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2100"
+   },
+   {
+    "a": "21:30",
+    "b": "21:50",
+    "t": "Caminata a la plaza",
+    "c": "wk",
+    "chk": true,
+    "k": "wk2130"
+   },
+   {
+    "a": "22:00",
+    "b": "23:00",
+    "t": "Datos 1 h",
+    "c": "stu",
+    "chk": true,
+    "k": "stu2200",
+    "n": "Python"
+   }
+  ],
+  "2": [
+   {
+    "a": "07:15",
+    "b": "08:00",
+    "t": "Llevar a Helena al jardín",
+    "c": "fam",
+    "chk": false,
+    "k": "fam0715"
+   },
+   {
+    "a": "08:00",
+    "b": "09:15",
+    "t": "Gym",
+    "c": "trn",
+    "chk": true,
+    "k": "trn0800"
+   },
+   {
+    "a": "09:15",
+    "b": "18:00",
+    "t": "Trabajo",
+    "c": "wrk",
+    "chk": false,
+    "k": "wrk0915"
+   },
+   {
+    "a": "13:00",
+    "b": "13:15",
+    "t": "Logística 15 min",
+    "c": "lg",
+    "chk": true,
+    "k": "lg1300",
+    "n": "Lectura de logística"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Inglés 30 min",
+    "c": "eng",
+    "chk": true,
+    "k": "eng1800",
+    "n": "Práctica"
+   },
+   {
+    "a": "18:30",
+    "b": "21:00",
+    "t": "Tarde libre",
+    "c": "fr",
+    "chk": false,
+    "k": "fr1830"
+   },
+   {
+    "a": "21:00",
+    "b": "21:30",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2100"
+   },
+   {
+    "a": "22:00",
+    "b": "23:00",
+    "t": "Datos 1 h",
+    "c": "stu",
+    "chk": true,
+    "k": "stu2200",
+    "n": "SQL"
+   }
+  ],
+  "3": [
+   {
+    "a": "07:30",
+    "b": "08:00",
+    "t": "Viaje: lectura de logística 30 min",
+    "c": "lg",
+    "chk": true,
+    "k": "lg0730"
+   },
+   {
+    "a": "09:00",
+    "b": "18:00",
+    "t": "Trabajo (oficina)",
+    "c": "wrk",
+    "chk": false,
+    "k": "wrk0900"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Viaje: vocabulario 30 min",
+    "c": "voc",
+    "chk": true,
+    "k": "voc1800"
+   },
+   {
+    "a": "20:15",
+    "b": "21:15",
+    "t": "Gym",
+    "c": "trn",
+    "chk": true,
+    "k": "trn2015"
+   },
+   {
+    "a": "21:30",
+    "b": "22:00",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2130"
+   },
+   {
+    "a": "22:00",
+    "b": "23:00",
+    "t": "Libre",
+    "c": "fr",
+    "chk": false,
+    "k": "fr2200"
+   }
+  ],
+  "4": [
+   {
+    "a": "07:15",
+    "b": "08:00",
+    "t": "Llevar a Helena al jardín",
+    "c": "fam",
+    "chk": false,
+    "k": "fam0715"
+   },
+   {
+    "a": "08:00",
+    "b": "09:15",
+    "t": "Gym",
+    "c": "trn",
+    "chk": true,
+    "k": "trn0800"
+   },
+   {
+    "a": "09:15",
+    "b": "18:00",
+    "t": "Trabajo",
+    "c": "wrk",
+    "chk": false,
+    "k": "wrk0915"
+   },
+   {
+    "a": "13:00",
+    "b": "13:15",
+    "t": "Logística 15 min",
+    "c": "lg",
+    "chk": true,
+    "k": "lg1300",
+    "n": "Lectura de logística"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Inglés 30 min",
+    "c": "eng",
+    "chk": true,
+    "k": "eng1800",
+    "n": "Speaking"
+   },
+   {
+    "a": "21:00",
+    "b": "21:30",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2100"
+   },
+   {
+    "a": "21:30",
+    "b": "21:50",
+    "t": "Caminata a la plaza",
+    "c": "wk",
+    "chk": true,
+    "k": "wk2130"
+   },
+   {
+    "a": "22:00",
+    "b": "23:00",
+    "t": "Datos 1 h",
+    "c": "stu",
+    "chk": true,
+    "k": "stu2200",
+    "n": "Estadística / ML"
+   }
+  ],
+  "5": [
+   {
+    "a": "07:30",
+    "b": "08:00",
+    "t": "Viaje: vocabulario 30 min",
+    "c": "voc",
+    "chk": true,
+    "k": "voc0730"
+   },
+   {
+    "a": "09:00",
+    "b": "18:00",
+    "t": "Trabajo (oficina)",
+    "c": "wrk",
+    "chk": false,
+    "k": "wrk0900"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Viaje: lectura de logística 30 min",
+    "c": "lg",
+    "chk": true,
+    "k": "lg1800"
+   },
+   {
+    "a": "20:15",
+    "b": "21:15",
+    "t": "Gym",
+    "c": "trn",
+    "chk": true,
+    "k": "trn2015"
+   },
+   {
+    "a": "21:30",
+    "b": "22:00",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2130"
+   },
+   {
+    "a": "22:00",
+    "b": "23:00",
+    "t": "Libre",
+    "c": "fr",
+    "chk": false,
+    "k": "fr2200"
+   }
+  ],
+  "6": [
+   {
+    "a": "10:00",
+    "b": "11:00",
+    "t": "Datos 1 h",
+    "c": "stu",
+    "chk": true,
+    "k": "stu1000",
+    "n": "Proyecto propio"
+   },
+   {
+    "a": "18:00",
+    "b": "18:30",
+    "t": "Inglés 30 min",
+    "c": "eng",
+    "chk": true,
+    "k": "eng1800",
+    "n": "Escritura"
+   },
+   {
+    "a": "21:00",
+    "b": "21:30",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2100"
+   },
+   {
+    "a": "21:30",
+    "b": "21:50",
+    "t": "Caminata a la plaza",
+    "c": "wk",
+    "chk": true,
+    "k": "wk2130"
+   },
+   {
+    "a": "22:00",
+    "b": "22:20",
+    "t": "Vocabulario 20 min",
+    "c": "voc",
+    "chk": true,
+    "k": "voc2200"
+   }
+  ],
+  "0": [
+   {
+    "a": "09:00",
+    "b": "13:00",
+    "t": "Mañana libre",
+    "c": "fr",
+    "chk": false,
+    "k": "fr0900"
+   },
+   {
+    "a": "18:00",
+    "b": "19:00",
+    "t": "Datos 1 h",
+    "c": "stu",
+    "chk": true,
+    "k": "stu1800",
+    "n": "Repaso"
+   },
+   {
+    "a": "20:30",
+    "b": "21:00",
+    "t": "Inglés 30 min",
+    "c": "eng",
+    "chk": true,
+    "k": "eng2030",
+    "n": "Listening"
+   },
+   {
+    "a": "21:00",
+    "b": "21:30",
+    "t": "Cena",
+    "c": "fam",
+    "chk": false,
+    "k": "fam2100"
+   },
+   {
+    "a": "21:30",
+    "b": "21:50",
+    "t": "Vocabulario 20 min",
+    "c": "voc",
+    "chk": true,
+    "k": "voc2130"
+   },
+   {
+    "a": "22:00",
+    "b": "22:15",
+    "t": "Plan de la semana 15 min",
+    "c": "pl",
+    "chk": true,
+    "k": "pl2200"
+   }
+  ]
+ }
+}

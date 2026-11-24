@@ -1,0 +1,8 @@
+{
+  "name": "mi-rutina",
+  "private": true,
+  "description": "Mi rutina: lista diaria completable con avisos",
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
