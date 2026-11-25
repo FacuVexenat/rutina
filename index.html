@@ -50,23 +50,37 @@ nav.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--ca
 nav.tabs button{flex:1;border:0;background:none;color:var(--mu);padding:10px 0 8px;font:inherit;font-size:12px;cursor:pointer}
 nav.tabs button b{display:block;font-size:20px;font-weight:400}
 nav.tabs button.on{color:var(--ac);font-weight:600}
+.hd{background:linear-gradient(135deg,#0F6E56,#1D9E75);color:#fff;border-radius:16px;padding:16px;margin-bottom:14px}
+.hd h1{margin:0 0 2px}.hd .sub{color:rgba(255,255,255,.88);margin-bottom:10px}
+.hd .bar{background:rgba(255,255,255,.3);margin:0}.hd .bar i{background:#fff}
+.nx{background:var(--card);border:1px solid var(--ac);border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
+.nx b{color:var(--ac)}
+.lk{display:inline-block;margin:8px 6px 0 0;padding:7px 12px;border-radius:999px;background:var(--ac);color:#fff;font-size:13px;text-decoration:none}
+.more{display:inline-block;margin-top:4px;font-size:12px;color:var(--ac);cursor:pointer}
+.stp{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--tx)}
+.stp li{margin:2px 0}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <main>
 <section id="v-hoy">
+<div class="hd">
 <h1 id="ttl"></h1>
 <div class="sub" id="sub"></div>
 <div class="bar"><i id="bar"></i></div>
+</div>
+<div id="next"></div>
 <div id="list"></div>
 <div class="chips" id="chips"></div>
 <div class="leg" id="leg"></div>
 </section>
 <section id="v-sem" hidden>
+<div class="hd">
 <h1>Esta semana</h1>
 <div class="sub" id="wsub"></div>
 <div class="bar"><i id="wbar"></i></div>
+</div>
 <div id="wcat"></div>
 </section>
 <section id="v-mas" hidden>
@@ -100,7 +114,7 @@ var KEY="rutina-estado-v1";
 var NM=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 var AB=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 var ORDER=[1,2,3,4,5,6,0];
-var S=null,st={},now=new Date(),sel=now.getDay();
+var S=null,opened={},st={},now=new Date(),sel=now.getDay();
 try{st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){st={}}
 function $(id){return document.getElementById(id)}
 function mirror(){try{if(window.caches)caches.open('rutina-state').then(function(c){return c.put('./state.json',new Response(JSON.stringify(st),{headers:{'Content-Type':'application/json'}}))}).catch(function(){})}catch(e){}}
@@ -122,14 +136,29 @@ function render(){
   $('bar').style.width=(p[1]?p[0]/p[1]*100:0)+'%';
   var nm=now.getHours()*60+now.getMinutes();
   var list=$('list');list.textContent='';
+  var nx=$('next');nx.textContent='';
+  var nextIt=null;
+  (S.days[sel]||[]).forEach(function(it){if(!nextIt&&it.chk&&!st[key(sel,it)]&&(!isToday||nm<mins(it.b)))nextIt=it});
+  if(nextIt){nx.appendChild(h('div',{class:'nx'},[h('b',{text:isToday?'Lo que sigue: ':'Primera tarea: '}),document.createTextNode(nextIt.a+' · '+nextIt.t+(nextIt.n?' ('+nextIt.n+')':''))]))}
+  else if(p[1]){nx.appendChild(h('div',{class:'nx'},[h('b',{text:'¡Listo! '}),document.createTextNode('Completaste todas las tareas de este día.')]))}
   (S.days[sel]||[]).forEach(function(it){
-    var dn=!!st[key(sel,it)];
+    var k=key(sel,it),dn=!!st[k];
     var cur=isToday&&nm>=mins(it.a)&&nm<mins(it.b);
     var cls='it'+(dn?' done':'')+(cur?' now':'')+(!it.chk?' pas':'');
     var t=h('div',{class:'t'});
     if(cur){t.appendChild(h('span',{class:'tag',text:'AHORA'}));t.appendChild(document.createElement('br'))}
     t.appendChild(document.createTextNode(it.t));
     if(it.n)t.appendChild(h('small',{text:it.n}));
+    if(it.st){
+      var op=!!opened[k];
+      t.appendChild(h('span',{class:'more','data-o':k,text:op?'Ocultar pasos ▴':'Ver pasos ▾'}));
+      if(op){var ul=h('ol',{class:'stp'});it.st.forEach(function(x){ul.appendChild(h('li',{text:x}))});t.appendChild(ul)}
+    }
+    if(it.ln&&it.ln.length){
+      var box=h('div',{});
+      it.ln.forEach(function(l){if(/^https:\/\//.test(l[1]))box.appendChild(h('a',{class:'lk',href:l[1],target:'_blank',rel:'noopener',text:l[0]+' ↗'}))});
+      t.appendChild(box);
+    }
     var kids=[h('div',{class:'tm'},[document.createTextNode(it.a),document.createElement('br'),document.createTextNode(it.b)]),t];
     if(it.chk){kids.push(h('button',{class:'ck','aria-label':'Marcar hecho','data-k':it.k,text:dn?'✓':''}))}
     list.appendChild(h('div',{class:cls,style:'border-left-color:'+S.cat[it.c][1]},kids));
@@ -148,6 +177,7 @@ function render(){
 document.addEventListener('click',function(ev){
   var b=ev.target.closest('.ck');
   if(b){var k=iso(dateOf(sel))+':'+b.dataset.k;if(st[k])delete st[k];else st[k]=1;save();render();return}
+  var o=ev.target.closest('.more');if(o){opened[o.dataset.o]=!opened[o.dataset.o];render();return}
   var c=ev.target.closest('.chip');if(c){sel=+c.dataset.d;render()}
 });
 Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){

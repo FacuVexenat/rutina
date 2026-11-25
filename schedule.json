@@ -57,7 +57,13 @@
     "t": "Gym",
     "c": "trn",
     "chk": true,
-    "k": "trn0800"
+    "k": "trn0800",
+    "n": "Empuje: pecho, hombros y tríceps",
+    "st": [
+     "Calentá 10 min (movilidad y series de aproximación)",
+     "4 o 5 ejercicios principales, 3 o 4 series cada uno",
+     "Cerrá con 5 min de estiramiento"
+    ]
    },
    {
     "a": "09:15",
@@ -74,7 +80,18 @@
     "c": "lg",
     "chk": true,
     "k": "lg1300",
-    "n": "Lectura de logística"
+    "n": "Libro de Logística comercial",
+    "st": [
+     "Abrí el libro donde quedaste",
+     "Leé un apartado (unos 15 min)",
+     "Anotá 1 idea y 1 término nuevo"
+    ],
+    "ln": [
+     [
+      "Libro gratis: Logística comercial",
+      "https://libreria.educacion.gob.es/ebook/176064/free_download"
+     ]
+    ]
    },
    {
     "a": "18:00",
@@ -83,7 +100,18 @@
     "c": "eng",
     "chk": true,
     "k": "eng1800",
-    "n": "Gramática"
+    "n": "Gramática",
+    "st": [
+     "Elegí una lección de gramática",
+     "Hacé los ejercicios",
+     "Anotá los errores para repasar"
+    ],
+    "ln": [
+     [
+      "LearnEnglish (British Council)",
+      "https://learnenglish.britishcouncil.org/"
+     ]
+    ]
    },
    {
     "a": "21:00",
@@ -99,7 +127,12 @@
     "t": "Caminata a la plaza",
     "c": "wk",
     "chk": true,
-    "k": "wk2130"
+    "k": "wk2130",
+    "st": [
+     "20 min a paso tranquilo",
+     "Sin celular",
+     "Si podés, hacé una vuelta completa a la plaza"
+    ]
    },
    {
     "a": "22:00",
@@ -108,7 +141,18 @@
     "c": "stu",
     "chk": true,
     "k": "stu2200",
-    "n": "Python"
+    "n": "Python",
+    "st": [
+     "Seguí con el próximo ejercicio",
+     "Escribí el código vos, sin copiar",
+     "Anotá lo que no entendiste"
+    ],
+    "ln": [
+     [
+      "freeCodeCamp: Python en español",
+      "https://www.freecodecamp.org/espanol/learn"
+     ]
+    ]
    }
   ],
   "2": [
@@ -126,7 +170,13 @@
     "t": "Gym",
     "c": "trn",
     "chk": true,
-    "k": "trn0800"
+    "k": "trn0800",
+    "n": "Tirón: espalda y bíceps",
+    "st": [
+     "Calentá 10 min (movilidad y series de aproximación)",
+     "4 o 5 ejercicios principales, 3 o 4 series cada uno",
+     "Cerrá con 5 min de estiramiento"
+    ]
    },
    {
     "a": "09:15",
@@ -143,7 +193,17 @@
     "c": "lg",
     "chk": true,
     "k": "lg1300",
-    "n": "Lectura de logística"
+    "n": "Curso de cadena de suministro",
+    "st": [
+     "Hacé la próxima lección del curso",
+     "Anotá 1 idea útil para tu trabajo"
+    ],
+    "ln": [
+     [
+      "Curso gratis: Cadena de suministro (Alison)",
+      "https://alison.com/es/curso/gestion-de-la-cadena-de-suministro-y-logistica"
+     ]
+    ]
    },
    {
     "a": "18:00",
@@ -152,7 +212,17 @@
     "c": "eng",
     "chk": true,
     "k": "eng1800",
-    "n": "Práctica"
+    "n": "Práctica diaria",
+    "st": [
+     "Hacé una lección corta",
+     "Repetí en voz alta 5 frases"
+    ],
+    "ln": [
+     [
+      "BBC Learning English",
+      "https://www.bbc.co.uk/learningenglish"
+     ]
+    ]
    },
    {
     "a": "18:30",
@@ -177,7 +247,22 @@
     "c": "stu",
     "chk": true,
     "k": "stu2200",
-    "n": "SQL"
+    "n": "SQL",
+    "st": [
+     "Un tema (SELECT, WHERE, JOIN…)",
+     "Practicá 5 consultas",
+     "Anotá las que te salieron mal"
+    ],
+    "ln": [
+     [
+      "SQLBolt (práctica de SQL)",
+      "https://sqlbolt.com"
+     ],
+     [
+      "Cursos de SQL gratis en español",
+      "https://hackceleration.com/es/curso/gratis/sql"
+     ]
+    ]
    }
   ],
   "3": [
@@ -187,7 +272,18 @@
     "t": "Viaje: lectura de logística 30 min",
     "c": "lg",
     "chk": true,
-    "k": "lg0730"
+    "k": "lg0730",
+    "n": "Libro de Logística comercial",
+    "st": [
+     "Leé desde el celular (el libro es PDF)",
+     "Subrayá 3 términos de transporte o almacén"
+    ],
+    "ln": [
+     [
+      "Libro gratis: Logística comercial",
+      "https://libreria.educacion.gob.es/ebook/176064/free_download"
+     ]
+    ]
    },
    {
     "a": "09:00",
@@ -203,7 +299,23 @@
     "t": "Viaje: vocabulario 30 min",
     "c": "voc",
     "chk": true,
-    "k": "voc1800"
+    "k": "voc1800",
+    "n": "Escuchar y anotar palabras",
+    "st": [
+     "Escuchá un episodio",
+     "Anotá 2 o 3 palabras nuevas",
+     "Buscá una en el DLE y escribí una frase tuya"
+    ],
+    "ln": [
+     [
+      "Podcast: Palabras y palabrejas",
+      "https://colombiaaprende.edu.co/recurso-coleccion/palabras-y-palabrejas"
+     ],
+     [
+      "Palabra del día (DLE)",
+      "https://dle.rae.es"
+     ]
+    ]
    },
    {
     "a": "20:15",
@@ -211,7 +323,13 @@
     "t": "Gym",
     "c": "trn",
     "chk": true,
-    "k": "trn2015"
+    "k": "trn2015",
+    "n": "Piernas y glúteos",
+    "st": [
+     "Calentá 10 min (movilidad y series de aproximación)",
+     "4 o 5 ejercicios principales, 3 o 4 series cada uno",
+     "Cerrá con 5 min de estiramiento"
+    ]
    },
    {
     "a": "21:30",
@@ -245,7 +363,13 @@
     "t": "Gym",
     "c": "trn",
     "chk": true,
-    "k": "trn0800"
+    "k": "trn0800",
+    "n": "Torso completo",
+    "st": [
+     "Calentá 10 min (movilidad y series de aproximación)",
+     "4 o 5 ejercicios principales, 3 o 4 series cada uno",
+     "Cerrá con 5 min de estiramiento"
+    ]
    },
    {
     "a": "09:15",
@@ -262,7 +386,17 @@
     "c": "lg",
     "chk": true,
     "k": "lg1300",
-    "n": "Lectura de logística"
+    "n": "Curso de cadena de suministro",
+    "st": [
+     "Hacé la próxima lección del curso",
+     "Anotá 1 idea útil para tu trabajo"
+    ],
+    "ln": [
+     [
+      "Curso gratis: Cadena de suministro (Alison)",
+      "https://alison.com/es/curso/gestion-de-la-cadena-de-suministro-y-logistica"
+     ]
+    ]
    },
    {
     "a": "18:00",
@@ -271,7 +405,21 @@
     "c": "eng",
     "chk": true,
     "k": "eng1800",
-    "n": "Speaking"
+    "n": "Speaking",
+    "st": [
+     "Mirá una charla corta con subtítulos en inglés",
+     "Resumila en voz alta, en 5 frases"
+    ],
+    "ln": [
+     [
+      "TED Talks",
+      "https://www.ted.com/talks"
+     ],
+     [
+      "Cambridge English: actividades",
+      "https://www.cambridgeenglish.org/learning-english/"
+     ]
+    ]
    },
    {
     "a": "21:00",
@@ -287,7 +435,12 @@
     "t": "Caminata a la plaza",
     "c": "wk",
     "chk": true,
-    "k": "wk2130"
+    "k": "wk2130",
+    "st": [
+     "20 min a paso tranquilo",
+     "Sin celular",
+     "Si podés, hacé una vuelta completa a la plaza"
+    ]
    },
    {
     "a": "22:00",
@@ -296,7 +449,21 @@
     "c": "stu",
     "chk": true,
     "k": "stu2200",
-    "n": "Estadística / ML"
+    "n": "Estadística y machine learning",
+    "st": [
+     "Un tema de estadística (promedio, desvío…)",
+     "Después, una lección de Kaggle (Intro to Machine Learning)"
+    ],
+    "ln": [
+     [
+      "Khan Academy: estadística",
+      "https://es.khanacademy.org/math/statistics-probability"
+     ],
+     [
+      "Kaggle Learn",
+      "https://www.kaggle.com/learn"
+     ]
+    ]
    }
   ],
   "5": [
@@ -306,7 +473,23 @@
     "t": "Viaje: vocabulario 30 min",
     "c": "voc",
     "chk": true,
-    "k": "voc0730"
+    "k": "voc0730",
+    "n": "Escuchar y anotar palabras",
+    "st": [
+     "Escuchá un episodio",
+     "Anotá 2 o 3 palabras nuevas",
+     "Buscá una en el DLE y escribí una frase tuya"
+    ],
+    "ln": [
+     [
+      "Podcast: Palabrita",
+      "https://podcasts.apple.com/sv/podcast/palabrita/id1590915924"
+     ],
+     [
+      "Palabra del día (DLE)",
+      "https://dle.rae.es"
+     ]
+    ]
    },
    {
     "a": "09:00",
@@ -322,7 +505,18 @@
     "t": "Viaje: lectura de logística 30 min",
     "c": "lg",
     "chk": true,
-    "k": "lg1800"
+    "k": "lg1800",
+    "n": "Curso en inglés (se audita gratis)",
+    "st": [
+     "Mirá un video del curso",
+     "Anotá 3 palabras de logística en inglés"
+    ],
+    "ln": [
+     [
+      "MIT: Supply Chain Fundamentals",
+      "https://micromasters.mit.edu/scm/"
+     ]
+    ]
    },
    {
     "a": "20:15",
@@ -330,7 +524,13 @@
     "t": "Gym",
     "c": "trn",
     "chk": true,
-    "k": "trn2015"
+    "k": "trn2015",
+    "n": "Cuerpo completo y core",
+    "st": [
+     "Calentá 10 min (movilidad y series de aproximación)",
+     "4 o 5 ejercicios principales, 3 o 4 series cada uno",
+     "Cerrá con 5 min de estiramiento"
+    ]
    },
    {
     "a": "21:30",
@@ -357,7 +557,18 @@
     "c": "stu",
     "chk": true,
     "k": "stu1000",
-    "n": "Proyecto propio"
+    "n": "Proyecto propio",
+    "st": [
+     "Armá un mini análisis con tus datos de viajes",
+     "Limpiá los datos y calculá 2 métricas",
+     "Anotá una conclusión"
+    ],
+    "ln": [
+     [
+      "Kaggle Learn",
+      "https://www.kaggle.com/learn"
+     ]
+    ]
    },
    {
     "a": "18:00",
@@ -366,7 +577,17 @@
     "c": "eng",
     "chk": true,
     "k": "eng1800",
-    "n": "Escritura"
+    "n": "Escritura",
+    "st": [
+     "Escribí 5 o 6 líneas sobre tu semana",
+     "Pegalas en Write & Improve y corregí"
+    ],
+    "ln": [
+     [
+      "Write & Improve (corrige tu texto)",
+      "https://writeandimprove.com"
+     ]
+    ]
    },
    {
     "a": "21:00",
@@ -382,7 +603,12 @@
     "t": "Caminata a la plaza",
     "c": "wk",
     "chk": true,
-    "k": "wk2130"
+    "k": "wk2130",
+    "st": [
+     "20 min a paso tranquilo",
+     "Sin celular",
+     "Si podés, hacé una vuelta completa a la plaza"
+    ]
    },
    {
     "a": "22:00",
@@ -390,7 +616,23 @@
     "t": "Vocabulario 20 min",
     "c": "voc",
     "chk": true,
-    "k": "voc2200"
+    "k": "voc2200",
+    "n": "Palabras de nuestra región",
+    "st": [
+     "Buscá una palabra de tu zona en el Diccionario de americanismos",
+     "Compará con lo que dice el DLE",
+     "Anotá 2 palabras y usalas mañana"
+    ],
+    "ln": [
+     [
+      "Diccionario de americanismos",
+      "https://www.rae.es/recursos/diccionarios/damer"
+     ],
+     [
+      "Palabra del día (DLE)",
+      "https://dle.rae.es"
+     ]
+    ]
    }
   ],
   "0": [
@@ -409,7 +651,22 @@
     "c": "stu",
     "chk": true,
     "k": "stu1800",
-    "n": "Repaso"
+    "n": "Repaso de la semana",
+    "st": [
+     "Repasá lo de la semana",
+     "Rehacé un ejercicio que te costó",
+     "Anotá qué sigue"
+    ],
+    "ln": [
+     [
+      "freeCodeCamp: Python en español",
+      "https://www.freecodecamp.org/espanol/learn"
+     ],
+     [
+      "SQLBolt (práctica de SQL)",
+      "https://sqlbolt.com"
+     ]
+    ]
    },
    {
     "a": "20:30",
@@ -418,7 +675,21 @@
     "c": "eng",
     "chk": true,
     "k": "eng2030",
-    "n": "Listening"
+    "n": "Listening",
+    "st": [
+     "Mirá un video sin subtítulos",
+     "Anotá 5 palabras nuevas"
+    ],
+    "ln": [
+     [
+      "TED Talks",
+      "https://www.ted.com/talks"
+     ],
+     [
+      "BBC Learning English",
+      "https://www.bbc.co.uk/learningenglish"
+     ]
+    ]
    },
    {
     "a": "21:00",
@@ -434,7 +705,22 @@
     "t": "Vocabulario 20 min",
     "c": "voc",
     "chk": true,
-    "k": "voc2130"
+    "k": "voc2130",
+    "n": "Etimologías y repaso",
+    "st": [
+     "Escuchá un episodio de etimologías",
+     "Repasá en Anki las palabras de la semana"
+    ],
+    "ln": [
+     [
+      "Podcast: Filología y etimologías",
+      "https://podnews.net/podcast/i7bc9"
+     ],
+     [
+      "Anki (repaso de palabras)",
+      "https://apps.ankiweb.net"
+     ]
+    ]
    },
    {
     "a": "22:00",
@@ -442,7 +728,19 @@
     "t": "Plan de la semana 15 min",
     "c": "pl",
     "chk": true,
-    "k": "pl2200"
+    "k": "pl2200",
+    "n": "Planificar",
+    "st": [
+     "Mirá la pestaña Semana",
+     "Elegí qué vas a priorizar",
+     "Ajustá horarios si hace falta"
+    ],
+    "ln": [
+     [
+      "Catálogo de estudio",
+      "https://claude.ai/artifact/Fr25CjULPVkWccxV3bTJMA"
+     ]
+    ]
    }
   ]
  }
