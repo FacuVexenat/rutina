@@ -70,6 +70,7 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 .bd{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid var(--bd);margin-right:4px;color:var(--mu)}
 .bd.al{background:#fdeaea;color:#a32d2d;border-color:#f0b8b8}.bd.vz{background:#fff0e0;color:#9a5a00;border-color:#f3cfa1}
 .ib{border:0;background:none;color:var(--mu);font-size:17px;cursor:pointer;padding:4px 6px}
+.wn{display:flex;align-items:center;justify-content:space-between;margin:12px 0 0;font-size:14px;font-weight:600}.wn .ib{font-size:20px;padding:8px 14px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
 .ptop{background:var(--card);border:1px solid #e8a33d;border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
 .ptop b{color:#9a5a00}.ptop div{margin-top:4px}.ptop .more{margin-top:8px}
 [hidden]{display:none!important}
@@ -86,6 +87,8 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 <div id="next"></div>
 <div id="ptop"></div>
 <div id="list"></div>
+<div class="wn"><button class="ib" data-wk="-1" aria-label="Semana anterior">◀</button><span id="wlbl"></span><button class="ib" data-wk="1" aria-label="Semana siguiente">▶</button></div>
+<div style="text-align:center"><button class="btn sec" id="wtoday" data-wk="0" hidden>Volver a hoy</button></div>
 <div class="chips" id="chips"></div>
 <div class="leg" id="leg"></div>
 </section>
@@ -150,14 +153,14 @@ var KEY="rutina-estado-v1";
 var NM=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
 var AB=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 var ORDER=[1,2,3,4,5,6,0];
-var S=null,opened={},st={},now=new Date(),sel=now.getDay();
+var S=null,opened={},st={},wk=0,now=new Date(),sel=now.getDay();
 try{st=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){st={}}
 function $(id){return document.getElementById(id)}
 function mirror(){try{if(window.caches)caches.open('rutina-state').then(function(c){return c.put('./state.json',new Response(JSON.stringify(st),{headers:{'Content-Type':'application/json'}}))}).catch(function(){})}catch(e){}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}mirror()}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
-function dateOf(wd){var d=new Date(now);d.setDate(now.getDate()+((wd+6)%7)-((now.getDay()+6)%7));return d}
+function dateOf(wd){var d=new Date(now);d.setDate(now.getDate()+((wd+6)%7)-((now.getDay()+6)%7)+wk*7);return d}
 function key(wd,it){return iso(dateOf(wd))+':'+it.k}
 function mins(s){var p=s.split(':');return +p[0]*60+ +p[1]}
 function h(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==='text')e.textContent=attrs[k];else if(k==='class')e.className=attrs[k];else if(k==='style')e.style.cssText=attrs[k];else e.setAttribute(k,attrs[k])}(kids||[]).forEach(function(c){e.appendChild(c)});return e}
@@ -165,8 +168,8 @@ function prog(wd){var t=0,d=0;(S.days[wd]||[]).forEach(function(it){if(it.chk){t
 function fmt(m){var hh=Math.floor(m/60),mm=m%60;return hh?(hh+' h'+(mm?' '+mm:'')):(mm+' min')}
 function render(){
   if(!S)return;
-  var isToday=sel===now.getDay();
-  $('ttl').textContent=isToday?'Hoy, '+NM[sel].toLowerCase():NM[sel];
+  var isToday=sel===now.getDay()&&wk===0;
+  var dd0=dateOf(sel);$('ttl').textContent=isToday?'Hoy, '+NM[sel].toLowerCase():NM[sel]+' '+pad(dd0.getDate())+'/'+pad(dd0.getMonth()+1);
   var p=prog(sel);
   $('sub').textContent=p[0]+' de '+p[1]+' tareas hechas';
   $('bar').style.width=(p[1]?p[0]/p[1]*100:0)+'%';
@@ -199,13 +202,14 @@ function render(){
     if(it.chk){kids.push(h('button',{class:'ck','aria-label':'Marcar hecho','data-k':it.k,text:dn?'✓':''}))}
     list.appendChild(h('div',{class:cls,style:'border-left-color:'+S.cat[it.c][1]},kids));
   });
+  var wa=dateOf(1),wz=dateOf(0);$('wlbl').textContent=(wk===0?'Esta semana':wk===-1?'Semana pasada':wk===1?'Semana próxima':(wk<0?'Hace '+(-wk)+' semanas':'En '+wk+' semanas'))+' · '+pad(wa.getDate())+'/'+pad(wa.getMonth()+1)+' al '+pad(wz.getDate())+'/'+pad(wz.getMonth()+1);$('wtoday').hidden=wk===0&&sel===now.getDay();
   var chips=$('chips');chips.textContent='';
-  ORDER.forEach(function(wd){var q=prog(wd);chips.appendChild(h('div',{class:'chip'+(wd===sel?' sel':'')+(wd===now.getDay()?' hoy':''),'data-d':wd},[h('b',{text:AB[wd]}),h('small',{text:q[0]+'/'+q[1]})]))});
+  ORDER.forEach(function(wd){var q=prog(wd);chips.appendChild(h('div',{class:'chip'+(wd===sel?' sel':'')+(wd===now.getDay()&&wk===0?' hoy':''),'data-d':wd},[h('b',{text:AB[wd]}),h('small',{text:q[0]+'/'+q[1]})]))});
   var leg=$('leg');leg.textContent='';
   Object.keys(S.cat).forEach(function(c){leg.appendChild(h('span',{},[h('i',{style:'background:'+S.cat[c][1]}),document.createTextNode(S.cat[c][0])]))});
   var tot=0,dn2=0,per={};
   ORDER.forEach(function(wd){(S.days[wd]||[]).forEach(function(it){if(!it.chk)return;var m=mins(it.b)-mins(it.a);tot++;var o=per[it.c]||(per[it.c]={p:0,d:0,n:0,nd:0});o.p+=m;o.n++;if(st[key(wd,it)]){dn2++;o.d+=m;o.nd++}})});
-  $('wsub').textContent=dn2+' de '+tot+' tareas hechas';
+  $('wsub').textContent=$('wlbl').textContent+' · '+dn2+' de '+tot+' tareas hechas';
   $('wbar').style.width=(tot?dn2/tot*100:0)+'%';
   var wc=$('wcat');wc.textContent='';
   Object.keys(per).forEach(function(c){var o=per[c];wc.appendChild(h('div',{class:'card',style:'border-left:5px solid '+S.cat[c][1]},[h('div',{class:'row'},[h('b',{text:S.cat[c][0]}),h('small',{text:o.nd+' de '+o.n+' sesiones'})]),h('div',{class:'row'},[h('small',{text:'Tiempo hecho'}),h('span',{text:fmt(o.d)+' de '+fmt(o.p)})])]))});
@@ -275,6 +279,7 @@ document.addEventListener('click',function(ev){
     else if(a==='clr'){if(!confirm('¿Borrar los pendientes hechos?'))return;st._td=all.filter(function(t){return !t.x})}
     else if(a==='ed'){var t=all.filter(function(x){return x.id===id})[0];if(t){pform(t);$('ptt').focus();window.scrollTo(0,0)}return}
     save();render();return}
+  var wb=ev.target.closest('[data-wk]');if(wb){var v=+wb.dataset.wk;if(v===0){wk=0;sel=now.getDay()}else wk+=v;render();return}
   var ps=ev.target.closest('[data-ps]');if(ps){psort=ps.dataset.ps;render();return}
   var go=ev.target.closest('[data-go]');if(go){goTab(go.dataset.go);return}
   var b=ev.target.closest('.ck');
