@@ -59,6 +59,19 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 .more{display:inline-block;margin-top:4px;font-size:12px;color:var(--ac);cursor:pointer}
 .stp{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--tx)}
 .stp li{margin:2px 0}
+.fm{display:grid;gap:8px}
+.fm input[type=text],.fm input[type=date],.fm select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit;font-size:15px}
+.fm .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fm label.ck2{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--mu)}
+.sg{display:flex;gap:6px;margin:10px 0}
+.sg button{flex:1;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 0;font:inherit;font-size:13px;cursor:pointer}
+.sg button.on{border-color:var(--ac);outline:1.5px solid var(--ac);color:var(--ac);font-weight:600}
+.gh{font-size:13px;font-weight:600;margin:14px 0 6px;color:var(--mu)}
+.bd{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid var(--bd);margin-right:4px;color:var(--mu)}
+.bd.al{background:#fdeaea;color:#a32d2d;border-color:#f0b8b8}.bd.vz{background:#fff0e0;color:#9a5a00;border-color:#f3cfa1}
+.ib{border:0;background:none;color:var(--mu);font-size:17px;cursor:pointer;padding:4px 6px}
+.ptop{background:var(--card);border:1px solid #e8a33d;border-radius:12px;padding:12px;margin-bottom:12px;font-size:14px}
+.ptop b{color:#9a5a00}.ptop div{margin-top:4px}.ptop .more{margin-top:8px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -71,6 +84,7 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 <div class="bar"><i id="bar"></i></div>
 </div>
 <div id="next"></div>
+<div id="ptop"></div>
 <div id="list"></div>
 <div class="chips" id="chips"></div>
 <div class="leg" id="leg"></div>
@@ -82,6 +96,27 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 <div class="bar"><i id="wbar"></i></div>
 </div>
 <div id="wcat"></div>
+</section>
+<section id="v-pen" hidden>
+<div class="hd">
+<h1>Pendientes</h1>
+<div class="sub" id="psub"></div>
+<div class="bar"><i id="pbar"></i></div>
+</div>
+<div class="card">
+<div class="fm">
+<input type="text" id="ptt" maxlength="80" placeholder="Nuevo pendiente (ej: pintar el auto)">
+<div class="two">
+<input type="date" id="pdd" aria-label="Fecha límite">
+<select id="pii" aria-label="Importancia"><option value="3">Imp. alta</option><option value="2" selected>Imp. normal</option><option value="1">Imp. baja</option></select>
+</div>
+<label class="ck2"><input type="checkbox" id="puu"> Es urgente aunque falte tiempo</label>
+<div><button class="btn" id="padd">Agregar</button><button class="btn sec" id="pcan" hidden>Cancelar</button></div>
+<div class="msg">Sin fecha límite también sirve. Con fecha, es urgente cuando faltan 7 días o menos.</div>
+</div>
+</div>
+<div class="sg" id="psg"></div>
+<div id="plist"></div>
 </section>
 <section id="v-mas" hidden>
 <h1>Más</h1>
@@ -105,6 +140,7 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 <nav class="tabs" id="tabs">
 <button data-t="hoy" class="on"><b>✅</b>Hoy</button>
 <button data-t="sem"><b>📅</b>Semana</button>
+<button data-t="pen"><b>📝</b>Pendientes</button>
 <button data-t="mas"><b>⚙️</b>Más</button>
 </nav>
 <script>
@@ -173,19 +209,81 @@ function render(){
   $('wbar').style.width=(tot?dn2/tot*100:0)+'%';
   var wc=$('wcat');wc.textContent='';
   Object.keys(per).forEach(function(c){var o=per[c];wc.appendChild(h('div',{class:'card',style:'border-left:5px solid '+S.cat[c][1]},[h('div',{class:'row'},[h('b',{text:S.cat[c][0]}),h('small',{text:o.nd+' de '+o.n+' sesiones'})]),h('div',{class:'row'},[h('small',{text:'Tiempo hecho'}),h('span',{text:fmt(o.d)+' de '+fmt(o.p)})])]))});
+  rendP();
 }
+var psort='prio',editId=null;
+function TD(){if(!st._tds){st._tds=1;st._td=[{id:'s1',t:'Pintar el auto',d:'',i:2,u:0,x:0},{id:'s2',t:'Cambiar manguera del aire acondicionado',d:'',i:2,u:0,x:0},{id:'s3',t:'Cambiar el filtro de agua PSA',d:'',i:2,u:0,x:0},{id:'s4',t:'Limpieza de sarro',d:'',i:2,u:0,x:0}];save()}return st._td||(st._td=[])}
+function days(t){if(!t.d)return null;var p=t.d.split('-');var a=new Date(+p[0],+p[1]-1,+p[2]);var b=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.round((a-b)/864e5)}
+function isU(t){var n=days(t);return !!t.u||(n!==null&&n<=7)}
+function isI(t){return t.i===3}
+function dl(t){var n=days(t);if(n===null)return 'Sin fecha';var p=t.d.split('-'),f=p[2]+'/'+p[1];if(n<0)return 'Vencido hace '+(-n)+(n===-1?' día':' días')+' · '+f;if(n===0)return 'Vence hoy · '+f;if(n===1)return 'Vence mañana · '+f;return 'Vence en '+n+' días · '+f}
+function quad(t){var i=isI(t),u=isU(t);return i&&u?0:i?1:u?2:3}
+var QN=[['🔴 Hacer ya','#c0392b'],['🟡 Planificar','#d4a017'],['🟠 Resolver rápido','#e67e22'],['⚪ Cuando puedas','#9a9a92']];
+function cmp(a,b){var da=days(a),db=days(b);if(da===null)da=9999;if(db===null)db=9999;return da-db||b.i-a.i||(a.t<b.t?-1:1)}
+function pitem(t,col){
+  var sm=h('small',{});
+  var im=t.i===3?['Alta','al']:t.i===1?['Baja','']:['Normal',''];
+  sm.appendChild(h('span',{class:'bd '+im[1],text:'Importancia '+im[0].toLowerCase()}));
+  var n=days(t);
+  sm.appendChild(h('span',{class:'bd'+(n!==null&&n<0?' vz':''),text:dl(t)}));
+  if(t.u&&n===null)sm.appendChild(h('span',{class:'bd vz',text:'Urgente'}));
+  var tt=h('div',{class:'t'},[document.createTextNode(t.t),sm]);
+  return h('div',{class:'it'+(t.x?' done':''),style:'border-left-color:'+col},[h('button',{class:'ck','aria-label':'Marcar hecho','data-pa':'ck','data-id':t.id,text:t.x?'✓':''}),tt,h('button',{class:'ib','aria-label':'Editar','data-pa':'ed','data-id':t.id,text:'✎'}),h('button',{class:'ib','aria-label':'Borrar','data-pa':'del','data-id':t.id,text:'✕'})]);
+}
+function rendP(){
+  var all=TD(),open=all.filter(function(t){return !t.x}).sort(cmp),done=all.filter(function(t){return t.x});
+  $('psub').textContent=done.length+' de '+all.length+' hechos';
+  $('pbar').style.width=(all.length?done.length/all.length*100:0)+'%';
+  var sg=$('psg');sg.textContent='';
+  [['prio','Prioridad'],['fecha','Fecha'],['imp','Importancia']].forEach(function(o){sg.appendChild(h('button',{class:psort===o[0]?'on':'','data-ps':o[0],text:o[1]}))});
+  var pl=$('plist');pl.textContent='';
+  function group(title,items,colf){if(!items.length)return;pl.appendChild(h('div',{class:'gh',text:title+' ('+items.length+')'}));items.forEach(function(t){pl.appendChild(pitem(t,colf(t)))})}
+  if(psort==='prio'){QN.forEach(function(q,k){group(q[0],open.filter(function(t){return quad(t)===k}),function(){return q[1]})})}
+  else if(psort==='fecha'){
+    group('⛔ Vencidos',open.filter(function(t){var n=days(t);return n!==null&&n<0}),function(t){return QN[quad(t)][1]});
+    group('Hoy y próximos 7 días',open.filter(function(t){var n=days(t);return n!==null&&n>=0&&n<=7}),function(t){return QN[quad(t)][1]});
+    group('Más adelante',open.filter(function(t){var n=days(t);return n!==null&&n>7}),function(t){return QN[quad(t)][1]});
+    group('Sin fecha',open.filter(function(t){return days(t)===null}),function(t){return QN[quad(t)][1]});
+  }else{
+    group('Importancia alta',open.filter(function(t){return t.i===3}),function(t){return QN[quad(t)][1]});
+    group('Importancia normal',open.filter(function(t){return t.i===2}),function(t){return QN[quad(t)][1]});
+    group('Importancia baja',open.filter(function(t){return t.i===1}),function(t){return QN[quad(t)][1]});
+  }
+  if(!open.length&&!done.length)pl.appendChild(h('div',{class:'msg',text:'No tenés pendientes. Agregá el primero arriba.'}));
+  if(done.length){group('✅ Hechos',done,function(){return '#9a9a92'});pl.appendChild(h('button',{class:'btn sec','data-pa':'clr',text:'Borrar los hechos'}))}
+  var pt=$('ptop');pt.textContent='';
+  var hot=open.filter(function(t){return quad(t)===0||(days(t)!==null&&days(t)<=1)}).slice(0,3);
+  if(hot.length){var bx=h('div',{class:'ptop'},[h('b',{text:'📝 Pendientes urgentes'})]);hot.forEach(function(t){bx.appendChild(h('div',{text:'• '+t.t+' — '+dl(t)}))});bx.appendChild(h('span',{class:'more','data-go':'pen',text:'Ver todos →'}));pt.appendChild(bx)}
+}
+function pform(t){editId=t?t.id:null;$('ptt').value=t?t.t:'';$('pdd').value=t?t.d:'';$('pii').value=t?String(t.i):'2';$('puu').checked=t?!!t.u:false;$('padd').textContent=t?'Guardar cambios':'Agregar';$('pcan').hidden=!t}
+function goTab(n){Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(x){x.classList.toggle('on',x.dataset.t===n)});['hoy','sem','pen','mas'].forEach(function(t){$('v-'+t).hidden=(t!==n)});window.scrollTo(0,0)}
+$('padd').onclick=function(){
+  var v=$('ptt').value.trim();if(!v){$('ptt').focus();return}
+  var o={t:v,d:$('pdd').value||'',i:+$('pii').value,u:$('puu').checked?1:0};
+  var all=TD();
+  if(editId){all.forEach(function(t){if(t.id===editId){t.t=o.t;t.d=o.d;t.i=o.i;t.u=o.u}})}
+  else{o.id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);o.x=0;all.push(o)}
+  save();pform(null);render();
+};
+$('pcan').onclick=function(){pform(null)};
+$('ptt').addEventListener('keydown',function(e){if(e.key==='Enter')$('padd').click()});
 document.addEventListener('click',function(ev){
+  var pa=ev.target.closest('[data-pa]');
+  if(pa){var a=pa.dataset.pa,id=pa.dataset.id,all=TD();
+    if(a==='ck'){all.forEach(function(t){if(t.id===id)t.x=t.x?0:1})}
+    else if(a==='del'){if(!confirm('¿Borrar este pendiente?'))return;st._td=all.filter(function(t){return t.id!==id})}
+    else if(a==='clr'){if(!confirm('¿Borrar los pendientes hechos?'))return;st._td=all.filter(function(t){return !t.x})}
+    else if(a==='ed'){var t=all.filter(function(x){return x.id===id})[0];if(t){pform(t);$('ptt').focus();window.scrollTo(0,0)}return}
+    save();render();return}
+  var ps=ev.target.closest('[data-ps]');if(ps){psort=ps.dataset.ps;render();return}
+  var go=ev.target.closest('[data-go]');if(go){goTab(go.dataset.go);return}
   var b=ev.target.closest('.ck');
   if(b){var k=iso(dateOf(sel))+':'+b.dataset.k;if(st[k])delete st[k];else st[k]=1;save();render();return}
   var o=ev.target.closest('.more');if(o){opened[o.dataset.o]=!opened[o.dataset.o];render();return}
   var c=ev.target.closest('.chip');if(c){sel=+c.dataset.d;render()}
 });
-Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){
-  Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(x){x.classList.toggle('on',x===b)});
-  ['hoy','sem','mas'].forEach(function(t){$('v-'+t).hidden=(t!==b.dataset.t)});
-  window.scrollTo(0,0);
-}});
-$('reset').onclick=function(){if(confirm('¿Borrar todo lo que tildaste?')){st={};save();render()}};
+Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.onclick=function(){goTab(b.dataset.t)}});
+$('reset').onclick=function(){if(confirm('¿Borrar todo lo que tildaste? Tus pendientes no se tocan.')){var td=st._td,tds=st._tds;st={};if(td){st._td=td;st._tds=tds}save();render()}};
 function notifLabel(){
   if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window))return 'Avisos no disponibles en este navegador';
   return (Notification.permission==='granted'&&localStorage.getItem('rutina-push'))?'✅ Avisos activados · probar de nuevo':'🔔 Activar avisos';
