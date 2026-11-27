@@ -226,7 +226,8 @@ function render(){
   rendP();
 }
 var psort='prio',editId=null;
-function TD(){if(!st._tds){st._tds=1;st._td=[{id:'s1',t:'Pintar el auto',d:'',i:2,u:0,x:0},{id:'s2',t:'Cambiar manguera del aire acondicionado',d:'',i:2,u:0,x:0},{id:'s3',t:'Cambiar el filtro de agua PSA',d:'',i:2,u:0,x:0},{id:'s4',t:'Limpieza de sarro',d:'',i:2,u:0,x:0}];save()}return st._td||(st._td=[])}
+var seedOK=true;
+function TD(){if(!st._tds&&seedOK){st._tds=1;st._td=[{id:'s1',t:'Pintar el auto',d:'',i:2,u:0,x:0},{id:'s2',t:'Cambiar manguera del aire acondicionado',d:'',i:2,u:0,x:0},{id:'s3',t:'Cambiar el filtro de agua PSA',d:'',i:2,u:0,x:0},{id:'s4',t:'Limpieza de sarro',d:'',i:2,u:0,x:0}]}return st._td||(st._td=[])}
 function days(t){if(!t.d)return null;var p=t.d.split('-');var a=new Date(+p[0],+p[1]-1,+p[2]);var b=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.round((a-b)/864e5)}
 function isU(t){var n=days(t);return !!t.u||(n!==null&&n<=7)}
 function isI(t){return t.i===3}
