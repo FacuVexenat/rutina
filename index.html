@@ -66,6 +66,8 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 .sg{display:flex;gap:6px;margin:10px 0}
 .sg button{flex:1;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 0;font:inherit;font-size:13px;cursor:pointer}
 .sg button.on{border-color:var(--ac);outline:1.5px solid var(--ac);color:var(--ac);font-weight:600}
+.les{display:block;color:var(--ac)!important;font-weight:600;font-size:12px;margin-top:2px}
+.tk{margin-top:8px}.tk .bar{margin:4px 0 0}
 .gh{font-size:13px;font-weight:600;margin:14px 0 6px;color:var(--mu)}
 .bd{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid var(--bd);margin-right:4px;color:var(--mu)}
 .bd.al{background:#fdeaea;color:#a32d2d;border-color:#f0b8b8}.bd.vz{background:#fff0e0;color:#9a5a00;border-color:#f3cfa1}
@@ -98,6 +100,7 @@ nav.tabs button.on{color:var(--ac);font-weight:600}
 <div class="sub" id="wsub"></div>
 <div class="bar"><i id="wbar"></i></div>
 </div>
+<div class="card"><h2 style="margin-top:0">📈 Avance del plan de estudio</h2><div class="msg" style="margin:0 0 4px">Cada sesión que completás te lleva a la clase siguiente.</div><div id="trk"></div></div>
 <div id="wcat"></div>
 </section>
 <section id="v-pen" hidden>
@@ -166,8 +169,12 @@ function mins(s){var p=s.split(':');return +p[0]*60+ +p[1]}
 function h(tag,attrs,kids){var e=document.createElement(tag);for(var k in (attrs||{})){if(k==='text')e.textContent=attrs[k];else if(k==='class')e.className=attrs[k];else if(k==='style')e.style.cssText=attrs[k];else e.setAttribute(k,attrs[k])}(kids||[]).forEach(function(c){e.appendChild(c)});return e}
 function prog(wd){var t=0,d=0;(S.days[wd]||[]).forEach(function(it){if(it.chk){t++;if(st[key(wd,it)])d++}});return[d,t]}
 function fmt(m){var hh=Math.floor(m/60),mm=m%60;return hh?(hh+' h'+(mm?' '+mm:'')):(mm+' min')}
+var SEQ={};
+function seq(){var L={};Object.keys(st).forEach(function(k){if(k.charAt(0)==='_'||!st[k])return;var i=k.indexOf(':'),d=k.slice(0,i),kk=k.slice(i+1),p=d.split('-');var wd=new Date(+p[0],+p[1]-1,+p[2]).getDay();var it=(S.days[wd]||[]).filter(function(x){return x.k===kk})[0];if(it&&it.tr)(L[it.tr]=L[it.tr]||[]).push([d,it.a,k])});Object.keys(L).forEach(function(t){L[t].sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:a[1]<b[1]?-1:1})});return L}
+function lesson(it,k){if(!it.tr||!S.tracks||!S.tracks[it.tr])return null;var T=S.tracks[it.tr],L=SEQ[it.tr]||[],ix=-1;L.forEach(function(x,j){if(x[2]===k)ix=j});var n=ix>=0?ix+1:L.length+1,ti=T.l&&T.l[n-1];return T.u+' '+n+(ti?': '+ti:(T.l&&n>T.l.length?' · plan completo, repasá lo que quieras':''))}
 function render(){
   if(!S)return;
+  SEQ=seq();
   var isToday=sel===now.getDay()&&wk===0;
   var dd0=dateOf(sel);$('ttl').textContent=isToday?'Hoy, '+NM[sel].toLowerCase():NM[sel]+' '+pad(dd0.getDate())+'/'+pad(dd0.getMonth()+1);
   var p=prog(sel);
@@ -178,7 +185,7 @@ function render(){
   var nx=$('next');nx.textContent='';
   var nextIt=null;
   (S.days[sel]||[]).forEach(function(it){if(!nextIt&&it.chk&&!st[key(sel,it)]&&(!isToday||nm<mins(it.b)))nextIt=it});
-  if(nextIt){nx.appendChild(h('div',{class:'nx'},[h('b',{text:isToday?'Lo que sigue: ':'Primera tarea: '}),document.createTextNode(nextIt.a+' · '+nextIt.t+(nextIt.n?' ('+nextIt.n+')':''))]))}
+  if(nextIt){nx.appendChild(h('div',{class:'nx'},[h('b',{text:isToday?'Lo que sigue: ':'Primera tarea: '}),document.createTextNode(nextIt.a+' · '+nextIt.t+(nextIt.n?' ('+nextIt.n+')':'')+(lesson(nextIt,key(sel,nextIt))?' — '+lesson(nextIt,key(sel,nextIt)):''))]))}
   else if(p[1]){nx.appendChild(h('div',{class:'nx'},[h('b',{text:'¡Listo! '}),document.createTextNode('Completaste todas las tareas de este día.')]))}
   (S.days[sel]||[]).forEach(function(it){
     var k=key(sel,it),dn=!!st[k];
@@ -188,6 +195,7 @@ function render(){
     if(cur){t.appendChild(h('span',{class:'tag',text:'AHORA'}));t.appendChild(document.createElement('br'))}
     t.appendChild(document.createTextNode(it.t));
     if(it.n)t.appendChild(h('small',{text:it.n}));
+    var ls=lesson(it,k);if(ls)t.appendChild(h('small',{class:'les',text:'▶ '+ls}));
     if(it.st){
       var op=!!opened[k];
       t.appendChild(h('span',{class:'more','data-o':k,text:op?'Ocultar pasos ▴':'Ver pasos ▾'}));
@@ -211,6 +219,8 @@ function render(){
   ORDER.forEach(function(wd){(S.days[wd]||[]).forEach(function(it){if(!it.chk)return;var m=mins(it.b)-mins(it.a);tot++;var o=per[it.c]||(per[it.c]={p:0,d:0,n:0,nd:0});o.p+=m;o.n++;if(st[key(wd,it)]){dn2++;o.d+=m;o.nd++}})});
   $('wsub').textContent=$('wlbl').textContent+' · '+dn2+' de '+tot+' tareas hechas';
   $('wbar').style.width=(tot?dn2/tot*100:0)+'%';
+  var tk=$('trk');tk.textContent='';
+  Object.keys(S.tracks||{}).forEach(function(t){var T=S.tracks[t],c=(SEQ[t]||[]).length;if(!T.l&&!c)return;var tot=T.l?T.l.length:0;var bx=h('div',{class:'tk'},[h('div',{class:'row'},[h('b',{text:T.n}),h('small',{text:tot?Math.min(c,tot)+' de '+tot+' completadas':c+' completadas'})])]);if(tot)bx.appendChild(h('div',{class:'bar'},[h('i',{style:'width:'+Math.min(100,c/tot*100)+'%'})]));tk.appendChild(bx)});
   var wc=$('wcat');wc.textContent='';
   Object.keys(per).forEach(function(c){var o=per[c];wc.appendChild(h('div',{class:'card',style:'border-left:5px solid '+S.cat[c][1]},[h('div',{class:'row'},[h('b',{text:S.cat[c][0]}),h('small',{text:o.nd+' de '+o.n+' sesiones'})]),h('div',{class:'row'},[h('small',{text:'Tiempo hecho'}),h('span',{text:fmt(o.d)+' de '+fmt(o.p)})])]))});
   rendP();

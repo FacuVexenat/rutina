@@ -91,7 +91,8 @@
       "Libro gratis: Logística comercial",
       "https://libreria.educacion.gob.es/ebook/176064/free_download"
      ]
-    ]
+    ],
+    "tr": "lib"
    },
    {
     "a": "18:00",
@@ -111,7 +112,8 @@
       "LearnEnglish (British Council)",
       "https://learnenglish.britishcouncil.org/"
      ]
-    ]
+    ],
+    "tr": "gram"
    },
    {
     "a": "21:00",
@@ -152,7 +154,8 @@
       "freeCodeCamp: Python en español",
       "https://www.freecodecamp.org/espanol/learn"
      ]
-    ]
+    ],
+    "tr": "py"
    }
   ],
   "2": [
@@ -203,7 +206,8 @@
       "Curso gratis: Cadena de suministro (Alison)",
       "https://alison.com/es/curso/gestion-de-la-cadena-de-suministro-y-logistica"
      ]
-    ]
+    ],
+    "tr": "cur"
    },
    {
     "a": "18:00",
@@ -262,7 +266,8 @@
       "Cursos de SQL gratis en español",
       "https://hackceleration.com/es/curso/gratis/sql"
      ]
-    ]
+    ],
+    "tr": "sql"
    }
   ],
   "3": [
@@ -283,7 +288,8 @@
       "Libro gratis: Logística comercial",
       "https://libreria.educacion.gob.es/ebook/176064/free_download"
      ]
-    ]
+    ],
+    "tr": "lib"
    },
    {
     "a": "09:00",
@@ -315,7 +321,8 @@
       "Palabra del día (DLE)",
       "https://dle.rae.es"
      ]
-    ]
+    ],
+    "tr": "pod"
    },
    {
     "a": "20:15",
@@ -396,7 +403,8 @@
       "Curso gratis: Cadena de suministro (Alison)",
       "https://alison.com/es/curso/gestion-de-la-cadena-de-suministro-y-logistica"
      ]
-    ]
+    ],
+    "tr": "cur"
    },
    {
     "a": "18:00",
@@ -463,7 +471,8 @@
       "Kaggle Learn",
       "https://www.kaggle.com/learn"
      ]
-    ]
+    ],
+    "tr": "ml"
    }
   ],
   "5": [
@@ -489,7 +498,8 @@
       "Palabra del día (DLE)",
       "https://dle.rae.es"
      ]
-    ]
+    ],
+    "tr": "pod"
    },
    {
     "a": "09:00",
@@ -516,7 +526,8 @@
       "MIT: Supply Chain Fundamentals",
       "https://micromasters.mit.edu/scm/"
      ]
-    ]
+    ],
+    "tr": "mit"
    },
    {
     "a": "20:15",
@@ -743,5 +754,119 @@
     ]
    }
   ]
+ },
+ "tracks": {
+  "py": {
+   "n": "Python",
+   "u": "Clase",
+   "l": [
+    "Instalar y primer programa (print, variables)",
+    "Tipos de datos y operadores",
+    "Strings y f-strings",
+    "Listas y tuplas",
+    "Diccionarios y sets",
+    "Condicionales (if/else)",
+    "Bucles for y while",
+    "Funciones",
+    "Leer y escribir archivos CSV",
+    "Módulos y librerías",
+    "Errores y try/except",
+    "NumPy básico",
+    "pandas: DataFrames",
+    "pandas: filtrar y agrupar",
+    "pandas: limpiar datos",
+    "Gráficos con matplotlib",
+    "Mini proyecto con un CSV real",
+    "Repaso general"
+   ]
+  },
+  "sql": {
+   "n": "SQL",
+   "u": "Clase",
+   "l": [
+    "SELECT: pedir columnas",
+    "WHERE: filtrar filas",
+    "WHERE con texto (LIKE, IN)",
+    "ORDER BY y LIMIT",
+    "Repaso de consultas simples",
+    "JOIN: unir tablas",
+    "LEFT/RIGHT JOIN",
+    "NULL: valores vacíos",
+    "Expresiones y alias",
+    "Agregaciones: COUNT, SUM, AVG",
+    "GROUP BY y HAVING",
+    "Orden de ejecución de una consulta",
+    "Subconsultas",
+    "INSERT, UPDATE y DELETE",
+    "CREATE y ALTER TABLE",
+    "Window functions básicas",
+    "CTE (WITH)",
+    "Proyecto: preguntas de negocio sobre una base"
+   ]
+  },
+  "ml": {
+   "n": "Estadística y ML",
+   "u": "Clase",
+   "l": [
+    "Media, mediana y moda",
+    "Dispersión: varianza y desvío",
+    "Distribuciones y la normal",
+    "Probabilidad básica",
+    "Muestreo e intervalos de confianza",
+    "Test de hipótesis y p-valor",
+    "Correlación y regresión lineal",
+    "Qué es machine learning",
+    "Entrenar, validar y testear",
+    "Regresión con scikit-learn",
+    "Clasificación: árboles y regresión logística",
+    "Métricas: accuracy, precisión y recall",
+    "Sobreajuste",
+    "Validación cruzada",
+    "Feature engineering",
+    "Clustering con k-means",
+    "Proyecto en Kaggle (Titanic)",
+    "Repaso general"
+   ]
+  },
+  "gram": {
+   "n": "Gramática de inglés",
+   "u": "Tema",
+   "l": [
+    "Presente simple",
+    "Presente continuo",
+    "Pasado simple",
+    "Pasado continuo",
+    "Presente perfecto",
+    "Futuro: will y going to",
+    "Modales: can, must, should",
+    "Condicionales 0 y 1",
+    "Condicional 2",
+    "Comparativos y superlativos",
+    "Artículos y cuantificadores",
+    "Preposiciones de tiempo y lugar",
+    "Verbos frasales comunes",
+    "Voz pasiva",
+    "Estilo indirecto",
+    "Oraciones de relativo",
+    "Repaso A",
+    "Repaso B"
+   ]
+  },
+  "lib": {
+   "n": "Libro de Logística comercial",
+   "u": "Lectura"
+  },
+  "cur": {
+   "n": "Curso de cadena de suministro",
+   "u": "Módulo"
+  },
+  "mit": {
+   "n": "MIT: Supply Chain Fundamentals",
+   "u": "Video"
+  },
+  "pod": {
+   "n": "Vocabulario con podcast",
+   "u": "Episodio"
+  }
  }
 }
